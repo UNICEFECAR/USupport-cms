@@ -118,3 +118,4 @@ build
 .env.staging
 .env.production
 .env.test.local
+db/data
