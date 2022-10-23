@@ -4,11 +4,12 @@
   "info": {
     "singularName": "article",
     "pluralName": "articles",
-    "displayName": "Article",
+    "displayName": "Articles",
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": true,
+    "populateCreatorFields": true
   },
   "pluginOptions": {
     "i18n": {
@@ -90,15 +91,29 @@
     },
     "category": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::category.category",
-      "inversedBy": "article"
+      "inversedBy": "articles"
     },
-    "tags": {
+    "age_groups": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::age-group.age-group",
+      "mappedBy": "articles"
+    },
+    "labels": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::tag.tag",
+      "target": "api::label.label",
       "mappedBy": "article"
+    },
+    "description": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "text"
     }
   }
 }
