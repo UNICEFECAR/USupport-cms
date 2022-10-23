@@ -1,9 +1,9 @@
 'use strict';
 
 /**
- * tag service
+ * age-group service
  */
 
 const { createCoreService } = require('@strapi/strapi').factories;
 
-module.exports = createCoreService('api::tag.tag');
+module.exports = createCoreService('api::age-group.age-group');
