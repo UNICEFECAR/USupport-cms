@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "labels",
+  "info": {
+    "singularName": "label",
+    "pluralName": "labels",
+    "displayName": "Label",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "article": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::article.article",
+      "inversedBy": "labels"
+    }
+  }
+}
