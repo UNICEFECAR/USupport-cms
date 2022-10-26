@@ -4,11 +4,12 @@
   "info": {
     "singularName": "article",
     "pluralName": "articles",
-    "displayName": "Article",
+    "displayName": "Articles",
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": true,
+    "populateCreatorFields": true
   },
   "pluginOptions": {
     "i18n": {
@@ -19,12 +20,9 @@
     "image": {
       "type": "media",
       "multiple": false,
-      "required": false,
+      "required": true,
       "allowedTypes": [
-        "images",
-        "files",
-        "videos",
-        "audios"
+        "images"
       ],
       "pluginOptions": {
         "i18n": {
@@ -46,7 +44,8 @@
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "required": true
     },
     "primary_sources": {
       "type": "json",
@@ -62,7 +61,8 @@
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "required": true
     },
     "reading_time": {
       "type": "biginteger",
@@ -70,7 +70,8 @@
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "required": true
     },
     "read_count": {
       "type": "biginteger",
@@ -78,7 +79,9 @@
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "required": false,
+      "default": "0"
     },
     "body": {
       "type": "richtext",
@@ -86,19 +89,35 @@
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "required": true,
+      "minLength": 25
     },
     "category": {
       "type": "relation",
-      "relation": "oneToOne",
+      "relation": "manyToOne",
       "target": "api::category.category",
-      "inversedBy": "article"
+      "inversedBy": "articles"
     },
-    "tags": {
+    "age_groups": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::age-group.age-group",
+      "mappedBy": "articles"
+    },
+    "labels": {
       "type": "relation",
       "relation": "oneToMany",
-      "target": "api::tag.tag",
+      "target": "api::label.label",
       "mappedBy": "article"
+    },
+    "description": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "text"
     }
   }
 }
