@@ -107,9 +107,9 @@
     },
     "labels": {
       "type": "relation",
-      "relation": "oneToMany",
+      "relation": "manyToMany",
       "target": "api::label.label",
-      "mappedBy": "article"
+      "mappedBy": "articles"
     },
     "description": {
       "pluginOptions": {

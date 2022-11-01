@@ -4,7 +4,7 @@
   "info": {
     "singularName": "label",
     "pluralName": "labels",
-    "displayName": "Label",
+    "displayName": "Tags",
     "description": ""
   },
   "options": {
@@ -24,9 +24,9 @@
         }
       }
     },
-    "article": {
+    "articles": {
       "type": "relation",
-      "relation": "manyToOne",
+      "relation": "manyToMany",
       "target": "api::article.article",
       "inversedBy": "labels"
     }
