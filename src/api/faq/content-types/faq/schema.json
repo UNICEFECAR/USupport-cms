@@ -16,7 +16,7 @@
     }
   },
   "attributes": {
-    "Question": {
+    "question": {
       "type": "string",
       "required": true,
       "pluginOptions": {
@@ -25,13 +25,24 @@
         }
       }
     },
-    "Answer": {
+    "answer": {
       "type": "richtext",
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
-      }
+      },
+      "required": true
+    },
+    "global": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "boolean",
+      "default": true,
+      "required": true
     }
   }
 }
