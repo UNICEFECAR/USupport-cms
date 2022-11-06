@@ -10,10 +10,11 @@
     "strapi": "strapi"
   },
   "dependencies": {
-    "@strapi/plugin-i18n": "4.3.9",
-    "@strapi/plugin-users-permissions": "4.3.9",
-    "@strapi/strapi": "4.3.9",
-    "pg": "8.6.0"
+    "@strapi/plugin-i18n": "4.4.4",
+    "@strapi/plugin-users-permissions": "4.4.4",
+    "@strapi/strapi": "4.4.4",
+    "pg": "8.6.0",
+    "strapi-plugin-country-select": "^1.0.0"
   },
   "author": {
     "name": "7Digit Ltd."

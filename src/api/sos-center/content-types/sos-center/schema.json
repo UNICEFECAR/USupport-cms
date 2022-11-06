@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "faqs",
+  "collectionName": "sos_centers",
   "info": {
-    "singularName": "faq",
-    "pluralName": "faqs",
-    "displayName": "FAQs",
+    "singularName": "sos-center",
+    "pluralName": "sos-centers",
+    "displayName": "SOS centers",
     "description": ""
   },
   "options": {
@@ -16,7 +16,7 @@
     }
   },
   "attributes": {
-    "question": {
+    "title": {
       "type": "string",
       "required": true,
       "pluginOptions": {
@@ -25,14 +25,30 @@
         }
       }
     },
-    "answer": {
-      "type": "richtext",
+    "text": {
+      "type": "text",
+      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
-      },
-      "required": true
+      }
+    },
+    "phone": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "url": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     },
     "global": {
       "pluginOptions": {

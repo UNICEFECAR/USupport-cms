@@ -1,14 +1,14 @@
 {
   "kind": "collectionType",
-  "collectionName": "faqs",
+  "collectionName": "privacy_policies",
   "info": {
-    "singularName": "faq",
-    "pluralName": "faqs",
-    "displayName": "FAQs",
+    "singularName": "privacy-policy",
+    "pluralName": "privacy-policies",
+    "displayName": "Privacy Policies",
     "description": ""
   },
   "options": {
-    "draftAndPublish": true
+    "draftAndPublish": false
   },
   "pluginOptions": {
     "i18n": {
@@ -16,8 +16,8 @@
     }
   },
   "attributes": {
-    "question": {
-      "type": "string",
+    "website": {
+      "type": "richtext",
       "required": true,
       "pluginOptions": {
         "i18n": {
@@ -25,24 +25,27 @@
         }
       }
     },
-    "answer": {
+    "client": {
       "type": "richtext",
+      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
-      },
-      "required": true
+      }
     },
-    "global": {
+    "provider": {
+      "type": "richtext",
+      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
-      },
-      "type": "boolean",
-      "default": true,
-      "required": true
+      }
+    },
+    "country": {
+      "type": "customField",
+      "customField": "plugin::country-select.country"
     }
   }
 }
