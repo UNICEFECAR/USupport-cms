@@ -89,15 +89,15 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
      * #desc    Get multiple articles
      */
     const { query } = ctx;
+    let availableLocales = {};
+    let localizedIds = [];
+    if (query.ids) {
+      availableLocales = await strapi
+        .service("api::article.article")
+        .computeAvailableLocalesForListOfArticleIds(ctx);
 
-    const availableLocales = await strapi
-      .service("api::article.article")
-      .computeAvailableLocalesForListOfArticleIds(ctx);
-
-    const localizedIds = getIdsForSpecificLocales(
-      query.locale,
-      availableLocales
-    );
+      localizedIds = getIdsForSpecificLocales(query.locale, availableLocales);
+    }
 
     if (!query.isForAdmin) {
       ctx.query.filters = {
