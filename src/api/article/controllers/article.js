@@ -5,6 +5,7 @@
  */
 
 const { createCoreController } = require("@strapi/strapi").factories;
+const { getIdsForSpecificLocales } = require("../../utils/utils.js");
 
 module.exports = createCoreController("api::article.article", ({ strapi }) => ({
   async addReadCount(ctx) {
@@ -89,23 +90,29 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
      */
     const { query } = ctx;
 
-    const articlesAvailableLocales = await strapi
+    const availableLocales = await strapi
       .service("api::article.article")
       .computeAvailableLocalesForListOfArticleIds(ctx);
 
-    const localizedArticleIds = await strapi
-      .service("api::article.article")
-      .getIdsForSpecificLocale(query.locale, articlesAvailableLocales);
+    const localizedIds = getIdsForSpecificLocales(
+      query.locale,
+      availableLocales
+    );
 
-    ctx.query.filters = {
-      ...ctx.query.filters,
-      id: {
-        ...ctx.query.filters?.id,
-        $in: localizedArticleIds,
-      },
-    };
+    if (!query.isForAdmin) {
+      ctx.query.filters = {
+        ...ctx.query.filters,
+        id: {
+          ...ctx.query.filters?.id,
+          $in: localizedIds,
+        },
+      };
+    }
 
     let { data, meta } = await super.find(ctx);
+
+    meta.availableLocales = availableLocales;
+    meta.localizedIds = localizedIds;
 
     return { data, meta };
   },

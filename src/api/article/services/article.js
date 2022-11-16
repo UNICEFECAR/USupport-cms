@@ -35,24 +35,4 @@ module.exports = createCoreService("api::article.article", ({ strapi }) => ({
 
     return result;
   },
-
-  /**
-   *
-   * @param {string} locale
-   * @param {object} articlesAvailableLocales e.g {"10": {"en": 10,"kk": 15}}
-   *
-   * @returns {array} array of ids for the given locale
-   */
-  async getIdsForSpecificLocale(locale, articlesAvailableLocales) {
-    let ids = [];
-    // loop through each key of the articlesAvailableLocales
-    for (const key in articlesAvailableLocales) {
-      // check if the object associated to the keay contains another key equal to locale
-      if (locale in articlesAvailableLocales[key]) {
-        // if yes, then push the id to the ids array
-        ids.push(articlesAvailableLocales[key][locale].toString());
-      }
-    }
-    return ids;
-  },
 }));
