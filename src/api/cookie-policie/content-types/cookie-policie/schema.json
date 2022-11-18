@@ -1,0 +1,48 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cookie_policies",
+  "info": {
+    "singularName": "cookie-policie",
+    "pluralName": "cookie-policies",
+    "displayName": "Cookie Policie",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "website": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "client": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "provider": {
+      "type": "richtext",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "country": {
+      "type": "customField",
+      "customField": "plugin::country-select.country"
+    }
+  }
+}
