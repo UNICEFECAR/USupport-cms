@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "terms_of_uses",
+  "info": {
+    "singularName": "terms-of-use",
+    "pluralName": "terms-of-uses",
+    "displayName": "Terms of Use",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "website": {
+      "type": "richtext",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "client": {
+      "type": "richtext",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "provider": {
+      "type": "richtext",
+      "required": true,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "country": {
+      "type": "customField",
+      "required": true,
+      "customField": "plugin::country-select.country"
+    }
+  }
+}
