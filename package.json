@@ -12,6 +12,7 @@
   "dependencies": {
     "@strapi/plugin-i18n": "4.4.4",
     "@strapi/plugin-users-permissions": "4.4.4",
+    "@strapi/provider-upload-aws-s3": "^4.5.1",
     "@strapi/strapi": "4.4.4",
     "pg": "8.6.0",
     "strapi-plugin-country-select": "^1.0.0"
