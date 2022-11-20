@@ -1,29 +1,29 @@
 "use strict";
 
 /**
- * privacy-policy controller
+ * terms-of-use controller
  */
 
 const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController(
-  "api::privacy-policy.privacy-policy",
+  "api::terms-of-use.terms-of-use",
   ({ strapi }) => ({
     async customFind(ctx) {
       /**
-       * #route   GET /privacy-policies/find
-       * #desc    Get privacy policies
+       * #route   GET /terms-of-uses/find
+       * #desc    Get terms of use
        */
       try {
         const { query } = ctx;
 
-        const privacyPolicies = await strapi.db
-          .query("api::privacy-policy.privacy-policy")
+        const termsOfUse = await strapi.db
+          .query("api::terms-of-use.terms-of-use")
           .findMany({ where: { locale: query.locale } });
 
         let result = null;
-        for (let i = 0; i < privacyPolicies.length; i++) {
-          const currentData = privacyPolicies[i];
+        for (let i = 0; i < termsOfUse.length; i++) {
+          const currentData = termsOfUse[i];
           if (currentData.country === query.country) {
             result = currentData[query.platform];
           }

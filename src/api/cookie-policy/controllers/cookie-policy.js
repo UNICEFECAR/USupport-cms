@@ -1,29 +1,29 @@
 "use strict";
 
 /**
- * privacy-policy controller
+ * cookie-policy controller
  */
 
 const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController(
-  "api::privacy-policy.privacy-policy",
+  "api::cookie-policy.cookie-policy",
   ({ strapi }) => ({
     async customFind(ctx) {
       /**
-       * #route   GET /privacy-policies/find
-       * #desc    Get privacy policies
+       * #route   GET /policy-cookies/find
+       * #desc    Get cookie policies
        */
       try {
         const { query } = ctx;
 
-        const privacyPolicies = await strapi.db
-          .query("api::privacy-policy.privacy-policy")
+        const cookiePolicy = await strapi.db
+          .query("api::cookie-policy.cookie-policy")
           .findMany({ where: { locale: query.locale } });
 
         let result = null;
-        for (let i = 0; i < privacyPolicies.length; i++) {
-          const currentData = privacyPolicies[i];
+        for (let i = 0; i < cookiePolicy.length; i++) {
+          const currentData = cookiePolicy[i];
           if (currentData.country === query.country) {
             result = currentData[query.platform];
           }
