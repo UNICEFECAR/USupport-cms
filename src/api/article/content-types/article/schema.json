@@ -30,31 +30,6 @@
         }
       }
     },
-    "status": {
-      "type": "enumeration",
-      "enum": [
-        "published",
-        "approved",
-        "draft",
-        "in_review",
-        "refused"
-      ],
-      "default": "draft",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
-      "required": true
-    },
-    "primary_sources": {
-      "type": "json",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      }
-    },
     "title": {
       "type": "string",
       "pluginOptions": {
