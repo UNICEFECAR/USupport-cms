@@ -1,8 +1,12 @@
 FROM node:16.17.0
-WORKDIR /opt/
-COPY ./package.json ./package-lock.json ./
-ENV PATH /opt/node_modules/.bin:$PATH
-RUN npm install
+
+EXPOSE 1337
+
 WORKDIR /opt/app
+
 COPY ./ .
+
+RUN npm install
+ENV PATH /opt/node_modules/.bin:$PATH
+
 CMD ["npm", "run", "develop"]
