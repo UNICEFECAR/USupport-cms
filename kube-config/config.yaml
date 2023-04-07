@@ -7,6 +7,4 @@ data:
   PORT: "1337"
   NODE_ENV: "development"
   STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE: "en"
-  AWS_REGION: "eu-central-1"
-  AWS_BUCKET_NAME: "usupport-staging/cms"
   EMAIL_SENDER: "usupport@7digit.io"
