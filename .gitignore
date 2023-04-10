@@ -119,3 +119,6 @@ build
 .env.production
 .env.test.local
 db/data
+
+# Kubernetes secrets
+secrets.yaml
