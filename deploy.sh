@@ -19,10 +19,10 @@ then
 
     # Build docker image of the service locally
     docker build -t cms:$IMAGE_TAG .
-    docker tag cms:$IMAGE_TAG 482053628475.dkr.ecr.eu-central-1.amazonaws.com/usupport-cms-api:$IMAGE_TAG
+    docker tag cms:$IMAGE_TAG 482053628475.dkr.ecr.eu-central-1.amazonaws.com/usupport-cms:$IMAGE_TAG
 
     # Push image to 
-    docker push 482053628475.dkr.ecr.eu-central-1.amazonaws.com/usupport-cms-api:$IMAGE_TAG
+    docker push 482053628475.dkr.ecr.eu-central-1.amazonaws.com/usupport-cms:$IMAGE_TAG
 
     cd kube-config
     
