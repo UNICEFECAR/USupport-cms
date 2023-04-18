@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cms-config
+data:
+  HOST: "0.0.0.0"
+  PORT: "1337"
+  NODE_ENV: "development"
+  STRAPI_PLUGIN_I18N_INIT_LOCALE_CODE: "en"
+  EMAIL_SENDER: "usupport@7digit.io"
