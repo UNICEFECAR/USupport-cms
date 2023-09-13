@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 /**
  * label router
  */
 
-const { createCoreRouter } = require('@strapi/strapi').factories;
+const { createCoreRouter } = require("@strapi/strapi").factories;
 
-module.exports = createCoreRouter('api::label.label');
+module.exports = createCoreRouter("api::label.label");

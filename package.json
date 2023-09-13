@@ -7,7 +7,9 @@
     "develop": "strapi develop",
     "start": "strapi start",
     "build": "strapi build",
-    "strapi": "strapi"
+    "strapi": "strapi",
+    "lint": "eslint . --ext .js",
+    "lint-fix": "eslint . --ext .js --fix"
   },
   "dependencies": {
     "@strapi/plugin-i18n": "4.4.4",
@@ -28,5 +30,8 @@
     "node": ">=14.19.1 <=18.x.x",
     "npm": ">=6.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.22.15"
+  }
 }
