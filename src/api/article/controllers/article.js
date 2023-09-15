@@ -8,6 +8,7 @@ const { createCoreController } = require("@strapi/strapi").factories;
 const { getIdsForSpecificLocales } = require("../../utils/utils.js");
 
 module.exports = createCoreController("api::article.article", ({ strapi }) => ({
+  // eslint-disable-next-line
   async addReadCount(ctx) {
     /**
      * #route   PUT /articles/addReadCount/:id

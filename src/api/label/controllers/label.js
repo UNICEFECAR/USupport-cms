@@ -1,9 +1,9 @@
-'use strict';
+"use strict";
 
 /**
  * label controller
  */
 
-const { createCoreController } = require('@strapi/strapi').factories;
+const { createCoreController } = require("@strapi/strapi").factories;
 
-module.exports = createCoreController('api::label.label');
+module.exports = createCoreController("api::label.label");
