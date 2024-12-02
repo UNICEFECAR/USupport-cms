@@ -10,28 +10,31 @@ module.exports = createCoreService("api::article.article", ({ strapi }) => ({
   async computeAvailableLocalesForListOfArticleIds(ctx) {
     const { query } = ctx;
 
-    // Convert querry.ids to array
-    const ids = query.ids.split(",");
+    // Convert query.ids to an array and handle potential edge cases
+    const ids = query.ids?.split(",") || [];
 
-    const result = {};
+    if (!ids.length) {
+      return {}; // Return an empty result if no IDs are provided
+    }
 
-    // Create object with keys beeing the values of an array mapped to empty objects
-    ids.forEach((id) => {
-      result[id] = {};
+    // Fetch all articles with the provided IDs in a single query
+    const articles = await strapi.db.query("api::article.article").findMany({
+      where: { id: { $in: ids } },
+      populate: true, // Only populate what's necessary
     });
 
-    // Get all the articles with the ids from the query
-    for (let i = 0; i < ids.length; i++) {
-      const article = await strapi.db
-        .query("api::article.article")
-        .findOne({ where: { id: ids[i] }, populate: true });
+    // Construct the result object
+    const result = articles.reduce((acc, article) => {
+      // Initialize the article's entry in the result object
+      acc[article.id] = { [article.locale]: article.id };
 
-      result[article.id][article.locale] = article.id;
-      for (let j = 0; j < article.localizations.length; j++) {
-        result[article.id][article.localizations[j].locale] =
-          article.localizations[j].id;
-      }
-    }
+      // Map localizations to their respective locales
+      article.localizations.forEach((localization) => {
+        acc[article.id][localization.locale] = localization.id;
+      });
+
+      return acc;
+    }, {});
 
     return result;
   },
