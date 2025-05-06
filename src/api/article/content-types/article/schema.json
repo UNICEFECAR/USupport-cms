@@ -112,6 +112,24 @@
       },
       "type": "string",
       "required": true
+    },
+    "likes": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "biginteger",
+      "default": "0"
+    },
+    "dislikes": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "biginteger",
+      "default": "0"
     }
   }
 }

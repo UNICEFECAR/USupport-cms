@@ -147,4 +147,44 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
 
     return res;
   },
+
+  async addRating(ctx) {
+    try {
+      const { id } = ctx.params;
+      const { action } = ctx.request.body;
+
+      const fieldToSelect =
+        action === "add-like" || action === "remove-like"
+          ? "likes"
+          : "dislikes";
+
+      const result = await strapi.db
+        .query("api::article.article")
+        .findOne({ select: ["likes", "dislikes"], where: { id: id } });
+
+      const updatedField =
+        action === "add-like"
+          ? parseInt(result.likes) + 1
+          : action === "remove-like"
+          ? parseInt(result.likes) - 1
+          : action === "add-dislike"
+          ? parseInt(result.dislikes) + 1
+          : parseInt(result.dislikes) - 1;
+
+      const resultAfterUpdate = await strapi.db
+        .query("api::article.article")
+        .update({
+          where: { id: id },
+          data: {
+            [fieldToSelect]:
+              updatedField < 0 ? 0 : isNaN(updatedField) ? 1 : updatedField,
+          },
+        });
+      ctx.body = resultAfterUpdate;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
 }));

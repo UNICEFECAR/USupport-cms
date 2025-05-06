@@ -16,7 +16,6 @@ module.exports = createCoreController(
        */
       try {
         const { query } = ctx;
-
         const aboutUsPage = await strapi.db
           .query("api::about-us-page.about-us-page")
           .findMany({ where: { locale: query.locale } });
@@ -25,6 +24,8 @@ module.exports = createCoreController(
         for (let i = 0; i < aboutUsPage.length; i++) {
           const currentData = aboutUsPage[i];
           if (currentData.country === query.country) {
+            result = currentData;
+          } else if (currentData.global && query.filters?.global) {
             result = currentData;
           }
         }

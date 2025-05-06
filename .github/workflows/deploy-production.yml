@@ -1,0 +1,75 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_GITHUB }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_GITHUB }}
+          aws-region: eu-central-1
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.27.0
+
+      - name: Decode kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_PRODUCTION }}" | base64 -d > $HOME/.kube/config
+
+      - name: Generate secrets.yaml
+        run: |
+          mkdir -p kube-config/prod
+          {
+            echo "apiVersion: v1"
+            echo "kind: Secret"
+            echo "metadata:"
+            echo "  name: cms-secrets"
+            echo "type: Opaque"
+            echo "data:"
+            echo "  APP_KEYS: '${{ secrets.APP_KEYS }}'"
+            echo "  API_TOKEN_SALT: '${{ secrets.API_TOKEN_SALT }}'"
+            echo "  ADMIN_JWT_SECRET: '${{ secrets.ADMIN_JWT_SECRET }}'"
+            echo "  JWT_SECRET: '${{ secrets.JWT_SECRET }}'"
+            echo "  DATABASE_HOST: '${{ secrets.DATABASE_HOST }}'"
+            echo "  DATABASE_PORT: '${{ secrets.DATABASE_PORT }}'"
+            echo "  DATABASE_NAME: '${{ secrets.DATABASE_NAME }}'"
+            echo "  DATABASE_USERNAME: '${{ secrets.DATABASE_USERNAME }}'"
+            echo "  DATABASE_PASSWORD: '${{ secrets.DATABASE_PASSWORD }}'"
+            echo "  DATABASE_CLIENT: '${{ secrets.DATABASE_CLIENT }}'"
+            echo "  DATABASE_SSL: '${{ secrets.DATABASE_SSL }}'"
+            echo "  AWS_ACCESS_KEY_ID: '${{ secrets.AWS_ACCESS_KEY_ID }}'"
+            echo "  AWS_SECRET_ACCESS_KEY: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'"
+            echo "  AWS_REGION: '${{ secrets.AWS_REGION }}'"
+            echo "  AWS_BUCKET_NAME: '${{ secrets.AWS_BUCKET_NAME }}'"
+            echo "  SMTP_HOST: '${{ secrets.SMTP_HOST }}'"
+            echo "  SMTP_PORT: '${{ secrets.SMTP_PORT }}'"
+            echo "  SMTP_USERNAME: '${{ secrets.SMTP_USERNAME }}'"
+            echo "  SMTP_PASSWORD: '${{ secrets.SMTP_PASSWORD }}'"
+          } > kube-config/prod/secrets.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          chmod +x ./deploy.sh
+          ./deploy.sh prod redeploy

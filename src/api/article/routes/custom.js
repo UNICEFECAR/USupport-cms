@@ -18,6 +18,15 @@ module.exports = {
     },
 
     {
+      method: "PUT",
+      path: "/articles/addRating/:id",
+      handler: "article.addRating",
+      config: {
+        auth: false,
+      },
+    },
+
+    {
       method: "GET",
       path: "/articles/getArticleLocales/:id",
       handler: "article.getArticleLocales",
