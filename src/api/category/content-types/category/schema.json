@@ -53,6 +53,12 @@
       "relation": "oneToMany",
       "target": "api::video.video",
       "mappedBy": "category"
+    },
+    "podcasts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::podcast.podcast",
+      "mappedBy": "category"
     }
   }
 }

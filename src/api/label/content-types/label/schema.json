@@ -36,6 +36,12 @@
       "relation": "manyToMany",
       "target": "api::video.video",
       "mappedBy": "labels"
+    },
+    "podcasts": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::podcast.podcast",
+      "mappedBy": "labels"
     }
   }
 }
