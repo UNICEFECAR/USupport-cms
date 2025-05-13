@@ -4,7 +4,8 @@
   "info": {
     "singularName": "cookie-policy",
     "pluralName": "cookie-policies",
-    "displayName": "Cookie Policy"
+    "displayName": "Cookie Policy",
+    "description": ""
   },
   "options": {
     "draftAndPublish": true
@@ -49,8 +50,18 @@
         }
       },
       "type": "customField",
-      "required": true,
+      "required": false,
       "customField": "plugin::country-select.country"
+    },
+    "global": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "boolean",
+      "default": false,
+      "required": true
     }
   }
 }

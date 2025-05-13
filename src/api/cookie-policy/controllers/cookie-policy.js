@@ -22,10 +22,24 @@ module.exports = createCoreController(
           .findMany({ where: { locale: query.locale } });
 
         let result = null;
-        for (let i = 0; i < cookiePolicy.length; i++) {
-          const currentData = cookiePolicy[i];
-          if (currentData.country === query.country) {
-            result = currentData[query.platform];
+
+        if (query.country === "global") {
+          // Look for cookie policy with global flag set to true
+          for (let i = 0; i < cookiePolicy.length; i++) {
+            const currentData = cookiePolicy[i];
+            if (currentData.global === true) {
+              result = currentData[query.platform];
+              break;
+            }
+          }
+        } else {
+          // Look for cookie policy with matching country
+          for (let i = 0; i < cookiePolicy.length; i++) {
+            const currentData = cookiePolicy[i];
+            if (currentData.country === query.country) {
+              result = currentData[query.platform];
+              break;
+            }
           }
         }
 
