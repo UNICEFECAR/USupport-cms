@@ -40,7 +40,8 @@
         }
       },
       "type": "string",
-      "required": true
+      "required": true,
+      "regex": "^https:\\/\\/open\\.spotify"
     },
     "thumbnail": {
       "type": "media",
