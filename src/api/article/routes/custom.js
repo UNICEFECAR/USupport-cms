@@ -16,7 +16,22 @@ module.exports = {
         auth: false,
       },
     },
-
+    {
+      method: "PUT",
+      path: "/articles/addDownloadCount/:id",
+      handler: "article.addDownloadCount",
+      config: {
+        auth: false,
+      },
+    },
+    {
+      method: "PUT",
+      path: "/articles/addShareCount/:id",
+      handler: "article.addShareCount",
+      config: {
+        auth: false,
+      },
+    },
     {
       method: "PUT",
       path: "/articles/addRating/:id",
