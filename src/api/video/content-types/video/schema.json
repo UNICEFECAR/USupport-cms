@@ -104,6 +104,15 @@
       },
       "type": "boolean",
       "default": false
+    },
+    "share_count": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "biginteger",
+      "default": "0"
     }
   }
 }
