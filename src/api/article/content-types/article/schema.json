@@ -130,6 +130,25 @@
       },
       "type": "biginteger",
       "default": "0"
+    },
+    "share_count": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "biginteger",
+      "default": "0"
+    },
+    "download_count": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "biginteger",
+      "default": "0",
+      "required": false
     }
   }
 }

@@ -36,6 +36,70 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
     }
   },
 
+  async addDownloadCount(ctx) {
+    /**
+     * #route   PUT /articles/addDownloadCount/:id
+     * #desc    Add 1 to the downloadCount of the article
+     */
+    try {
+      const { id } = ctx.params;
+
+      const result = await strapi.db
+        .query("api::article.article")
+        .findOne({ select: ["download_count"], where: { id: id } });
+
+      // Handle null/undefined download_count by defaulting to 0
+      const currentCount = result?.download_count
+        ? parseInt(result.download_count)
+        : 0;
+
+      const resultAfterUpdate = await strapi.db
+        .query("api::article.article")
+        .update({
+          where: { id: id },
+          data: { download_count: currentCount + 1 },
+        });
+
+      ctx.body = resultAfterUpdate;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
+
+  async addShareCount(ctx) {
+    /**
+     * #route   PUT /articles/addShareCount/:id
+     * #desc    Add 1 to the shareCount of the article
+     */
+    try {
+      const { id } = ctx.params;
+
+      const result = await strapi.db
+        .query("api::article.article")
+        .findOne({ select: ["share_count"], where: { id: id } });
+
+      // Handle null/undefined share_count by defaulting to 0
+      const currentCount = result?.share_count
+        ? parseInt(result.share_count)
+        : 0;
+
+      const resultAfterUpdate = await strapi.db
+        .query("api::article.article")
+        .update({
+          where: { id: id },
+          data: { share_count: currentCount + 1 },
+        });
+
+      ctx.body = resultAfterUpdate;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
+
   async getArticleLocales(ctx) {
     /**
      * #route   GET /articles/getArticleLocales/:id

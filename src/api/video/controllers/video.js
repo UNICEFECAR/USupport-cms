@@ -157,6 +157,33 @@ module.exports = createCoreController("api::video.video", ({ strapi }) => ({
     }
   },
 
+  async addShareCount(ctx) {
+    /**
+     * #route   PUT /videos/addShareCount/:id
+     * #desc    Add 1 to the shareCount of the video
+     */
+    try {
+      const { id } = ctx.params;
+
+      const result = await strapi.db
+        .query("api::video.video")
+        .findOne({ select: ["share_count"], where: { id: id } });
+
+      const resultAfterUpdate = await strapi.db
+        .query("api::video.video")
+        .update({
+          where: { id: id },
+          data: { share_count: parseInt(result.share_count || 0) + 1 },
+        });
+
+      ctx.body = resultAfterUpdate;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
+
   async getVideoLocales(ctx) {
     /**
      * #route   GET /videos/getVideoLocales/:id
