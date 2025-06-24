@@ -42,6 +42,14 @@ module.exports = {
     },
 
     {
+      method: "PUT",
+      path: "/articles/recommended/category",
+      handler: "article.getRecommendedArticlesForCategory",
+      config: {
+        auth: false,
+      },
+    },
+    {
       method: "GET",
       path: "/articles/getArticleLocales/:id",
       handler: "article.getArticleLocales",
