@@ -110,6 +110,33 @@ module.exports = createCoreController("api::podcast.podcast", ({ strapi }) => ({
     }
   },
 
+  async addShareCount(ctx) {
+    /**
+     * #route   PUT /podcasts/addShareCount/:id
+     * #desc    Add 1 to the shareCount of the podcast
+     */
+    try {
+      const { id } = ctx.params;
+
+      const result = await strapi.db
+        .query("api::podcast.podcast")
+        .findOne({ select: ["share_count"], where: { id: id } });
+
+      const resultAfterUpdate = await strapi.db
+        .query("api::podcast.podcast")
+        .update({
+          where: { id: id },
+          data: { share_count: parseInt(result.share_count || 0) + 1 },
+        });
+
+      ctx.body = resultAfterUpdate;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
+
   async getPodcastLocales(ctx) {
     /**
      * #route   GET /podcasts/getPodcastLocales/:id

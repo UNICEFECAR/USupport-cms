@@ -18,6 +18,14 @@ module.exports = {
     },
     {
       method: "PUT",
+      path: "/podcasts/addShareCount/:id",
+      handler: "podcast.addShareCount",
+      config: {
+        auth: false,
+      },
+    },
+    {
+      method: "PUT",
       path: "/podcasts/addRating/:id",
       handler: "podcast.addRating",
       config: {

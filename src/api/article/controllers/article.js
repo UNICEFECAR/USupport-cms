@@ -36,6 +36,70 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
     }
   },
 
+  async addDownloadCount(ctx) {
+    /**
+     * #route   PUT /articles/addDownloadCount/:id
+     * #desc    Add 1 to the downloadCount of the article
+     */
+    try {
+      const { id } = ctx.params;
+
+      const result = await strapi.db
+        .query("api::article.article")
+        .findOne({ select: ["download_count"], where: { id: id } });
+
+      // Handle null/undefined download_count by defaulting to 0
+      const currentCount = result?.download_count
+        ? parseInt(result.download_count)
+        : 0;
+
+      const resultAfterUpdate = await strapi.db
+        .query("api::article.article")
+        .update({
+          where: { id: id },
+          data: { download_count: currentCount + 1 },
+        });
+
+      ctx.body = resultAfterUpdate;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
+
+  async addShareCount(ctx) {
+    /**
+     * #route   PUT /articles/addShareCount/:id
+     * #desc    Add 1 to the shareCount of the article
+     */
+    try {
+      const { id } = ctx.params;
+
+      const result = await strapi.db
+        .query("api::article.article")
+        .findOne({ select: ["share_count"], where: { id: id } });
+
+      // Handle null/undefined share_count by defaulting to 0
+      const currentCount = result?.share_count
+        ? parseInt(result.share_count)
+        : 0;
+
+      const resultAfterUpdate = await strapi.db
+        .query("api::article.article")
+        .update({
+          where: { id: id },
+          data: { share_count: currentCount + 1 },
+        });
+
+      ctx.body = resultAfterUpdate;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
+
   async getArticleLocales(ctx) {
     /**
      * #route   GET /articles/getArticleLocales/:id
@@ -108,6 +172,22 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
           $in: localizedIds,
         },
       };
+
+      // Add age group filter if provided
+      if (query.ageGroupId) {
+        ctx.query.filters.age_groups = {
+          ...ctx.query.filters?.age_groups,
+          id: query.ageGroupId,
+        };
+      }
+
+      // Add category filter if provided
+      if (query.categoryId) {
+        ctx.query.filters.category = {
+          ...ctx.query.filters?.category,
+          id: query.categoryId,
+        };
+      }
     }
 
     let { data, meta } = await super.find(ctx);
@@ -187,4 +267,229 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
       ctx.body = { error: err.message };
     }
   },
+
+  async getRecommendedArticlesForCategory(ctx) {
+    try {
+      const {
+        categoryId,
+        categoryWeight,
+        page = 1,
+        limit = 10,
+        language = "en",
+        excludeIds = [],
+        countryArticleIds = [],
+        ageGroupId = null,
+        tagIds = [],
+        contains = "",
+      } = ctx.request.body;
+
+      const offset = (page - 1) * limit;
+
+      const whereClause = {
+        category: { id: categoryId },
+        locale: language,
+        publishedAt: { $notNull: true },
+        id: { $notIn: excludeIds, $in: countryArticleIds },
+      };
+
+      // Add age group filter if provided
+      if (ageGroupId) {
+        whereClause.age_groups = { id: ageGroupId };
+      }
+
+      // Add search filter if provided
+      if (contains) {
+        whereClause.$or = [
+          { title: { $containsi: contains } },
+          { description: { $containsi: contains } },
+        ];
+      }
+
+      const categoryArticles = await strapi.db
+        .query("api::article.article")
+        .findMany({
+          where: whereClause,
+          populate: true,
+          orderBy: [
+            { read_count: "desc" },
+            { likes: "desc" },
+            { createdAt: "desc" },
+          ],
+          offset,
+          limit,
+        });
+
+      // Add category weight and recommendation score to articles
+      const weightedArticles = categoryArticles.map((article) => ({
+        ...article,
+        categoryWeight,
+        recommendationScore: this.calculateRecommendationScore(
+          article,
+          categoryWeight,
+          tagIds
+        ),
+      }));
+
+      // sort by weight and recommendation score
+      weightedArticles.sort(
+        (a, b) => b.recommendationScore - a.recommendationScore
+      );
+
+      // Get total count for pagination using same where clause
+      const countWhereClause = {
+        ...whereClause,
+        id: { $notIn: excludeIds },
+      };
+
+      const totalCount = await strapi.db.query("api::article.article").count({
+        where: countWhereClause,
+      });
+
+      const hasMore = offset + limit < totalCount;
+
+      const transformedArticles = weightedArticles.map((article) =>
+        optimizedTransform(article)
+      );
+
+      ctx.body = {
+        success: true,
+        data: transformedArticles,
+        categoryId,
+        categoryWeight,
+        pagination: {
+          page,
+          limit,
+          total: totalCount,
+          hasMore,
+          totalPages: Math.ceil(totalCount / limit),
+        },
+      };
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
+
+  // Helper method to calculate recommendation score
+  calculateRecommendationScore(article, categoryWeight, tagIds) {
+    const tagWeight = 0.5;
+    const readCountWeight = 0.4;
+    const likesWeight = 0.3;
+    const categoryWeight_ = 0.2;
+    const freshnessWeight = 0.1;
+
+    const currentArticleTagIds = article.labels?.map((x) => Number(x.id));
+    const matchingTagIds = currentArticleTagIds.filter((id) =>
+      tagIds.includes(id)
+    );
+
+    // Normalize values (you may want to adjust these based on your data)
+    const normalizedReadCount = Math.log(1 + (article.read_count || 0)) / 10;
+    const normalizedLikes = Math.log(1 + (article.likes || 0)) / 5;
+    const normalizedCategoryWeight = Math.log(1 + categoryWeight) / 3;
+
+    // Freshness score (newer articles get higher score)
+    const daysSinceCreated =
+      (Date.now() - new Date(article.createdAt).getTime()) /
+      (1000 * 60 * 60 * 24);
+    const freshnessScore = Math.max(0, 1 - daysSinceCreated / 365); // Decay over a year
+
+    const score =
+      normalizedReadCount * readCountWeight +
+      normalizedLikes * likesWeight +
+      normalizedCategoryWeight * categoryWeight_ +
+      freshnessScore * freshnessWeight +
+      matchingTagIds.length * tagWeight;
+    console.log("score", score);
+    return score;
+  },
 }));
+
+const optimizedTransform = (rawData) => {
+  const transformArticle = (article) => {
+    const { id, ...attributes } = article;
+
+    return {
+      id,
+      attributes: {
+        ...attributes,
+        // Transform specific relations
+        image: attributes.image
+          ? {
+              data: attributes.image.id
+                ? {
+                    id: attributes.image.id,
+                    attributes: { ...attributes.image, id: undefined },
+                  }
+                : null,
+            }
+          : null,
+
+        category: attributes.category
+          ? {
+              data: {
+                id: attributes.category.id,
+                attributes: { ...attributes.category, id: undefined },
+              },
+            }
+          : null,
+
+        age_groups: attributes.age_groups
+          ? {
+              data: attributes.age_groups.map((group) => ({
+                id: group.id,
+                attributes: { ...group, id: undefined },
+              })),
+            }
+          : { data: [] },
+
+        labels: attributes.labels
+          ? {
+              data: attributes.labels.map((label) => ({
+                id: label.id,
+                attributes: { ...label, id: undefined },
+              })),
+            }
+          : { data: [] },
+
+        createdBy: attributes.createdBy
+          ? {
+              data: {
+                id: attributes.createdBy.id,
+                attributes: { ...attributes.createdBy, id: undefined },
+              },
+            }
+          : null,
+
+        updatedBy: attributes.updatedBy
+          ? {
+              data: {
+                id: attributes.updatedBy.id,
+                attributes: { ...attributes.updatedBy, id: undefined },
+              },
+            }
+          : null,
+
+        localizations: attributes.localizations
+          ? {
+              data: attributes.localizations.map((loc) => ({
+                id: loc.id,
+                attributes: { ...loc, id: undefined },
+              })),
+            }
+          : { data: [] },
+      },
+    };
+  };
+
+  if (Array.isArray(rawData)) {
+    return {
+      data: rawData.map(transformArticle),
+    };
+  }
+
+  return {
+    data: transformArticle(rawData),
+  };
+};

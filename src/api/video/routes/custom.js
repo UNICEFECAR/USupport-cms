@@ -24,5 +24,13 @@ module.exports = {
         auth: false,
       },
     },
+    {
+      method: "PUT",
+      path: "/videos/addShareCount/:id",
+      handler: "video.addShareCount",
+      config: {
+        auth: false,
+      },
+    },
   ],
 };
