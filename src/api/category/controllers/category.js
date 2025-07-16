@@ -204,7 +204,6 @@ module.exports = createCoreController(
             totalScore += calculateItemEngagement(item, "podcast");
           });
 
-          // Return average score
           const normalized = Math.log10(totalScore + 1) * 10;
           return normalized;
         };
