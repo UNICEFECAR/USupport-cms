@@ -15,9 +15,9 @@ module.exports = createCoreController(
        * #desc    Get statistics for all categories aggregated across all locales
        */
       try {
-        // get headers from ctx?
         const headers = ctx.request.headers;
         const language = headers["x-language-alpha-2"];
+        const contentType = ctx.query.contentType;
 
         // Get all categories with their localizations
         const categories = await strapi.db
@@ -30,9 +30,12 @@ module.exports = createCoreController(
             },
           });
 
-        // Fetch ALL content with category relationships upfront
-        const [allArticles, allVideos, allPodcasts] = await Promise.all([
-          strapi.db.query("api::article.article").findMany({
+        let allArticles = [];
+        let allVideos = [];
+        let allPodcasts = [];
+
+        if (contentType === "articles" || contentType === "all") {
+          allArticles = await strapi.db.query("api::article.article").findMany({
             populate: {
               category: {
                 select: ["id"],
@@ -45,24 +48,30 @@ module.exports = createCoreController(
               "likes",
               "dislikes",
             ],
-          }),
-          strapi.db.query("api::video.video").findMany({
+          });
+        }
+
+        if (contentType === "videos" || contentType === "all") {
+          allVideos = await strapi.db.query("api::video.video").findMany({
             populate: {
               category: {
                 select: ["id"],
               },
             },
             select: ["view_count", "share_count", "likes", "dislikes"],
-          }),
-          strapi.db.query("api::podcast.podcast").findMany({
+          });
+        }
+
+        if (contentType === "podcasts" || contentType === "all") {
+          allPodcasts = await strapi.db.query("api::podcast.podcast").findMany({
             populate: {
               category: {
                 select: ["id"],
               },
             },
             select: ["view_count", "share_count", "likes", "dislikes"],
-          }),
-        ]);
+          });
+        }
 
         // Group content by category ID for quick lookup
         const articlesByCategory = new Map();
@@ -139,22 +148,21 @@ module.exports = createCoreController(
           return category.name;
         };
 
-        const calculateItemRating = (likes, dislikes) => {
-          const total = likes + dislikes;
-          if (total === 0) return 0;
-          return (likes / total) * 100;
-        };
-
         // Calculate average rating for a whole category (any content type)
         const calculateAverageCategoryRating = (contentList) => {
           if (contentList.length === 0) return 0;
 
-          const totalRating = contentList.reduce((sum, item) => {
-            const itemRating = calculateItemRating(item.likes, item.dislikes);
-            return sum + itemRating;
-          }, 0);
+          let totalLikes = 0;
+          let totalDislikes = 0;
 
-          return totalRating / contentList.length;
+          for (const { likes, dislikes } of contentList) {
+            totalLikes += Number(likes) || 0;
+            totalDislikes += Number(dislikes) || 0;
+          }
+
+          const totalReactions = totalLikes + totalDislikes;
+          if (totalReactions === 0) return null;
+          return 1 + 9 * (totalLikes / totalReactions);
         };
 
         const calculateItemEngagement = (item, type) => {
@@ -196,7 +204,6 @@ module.exports = createCoreController(
             totalScore += calculateItemEngagement(item, "podcast");
           });
 
-          // Return average score
           const normalized = Math.log10(totalScore + 1) * 10;
           return normalized;
         };
@@ -218,6 +225,8 @@ module.exports = createCoreController(
             category.id,
             ...(category.localizations || []).map((loc) => loc.id),
           ];
+
+          console.log(allLocalizationIds);
 
           // Mark all related localizations as processed
           allLocalizationIds.forEach((id) => {
@@ -312,7 +321,7 @@ module.exports = createCoreController(
             podcasts.likes += parseInt(podcast.likes || 0);
             podcasts.dislikes += parseInt(podcast.dislikes || 0);
           });
-
+          console.log(videos, "videos");
           statistics.views = articles.reads + videos.views + podcasts.views;
 
           statistics.shares = articles.shares + videos.shares + podcasts.shares;
