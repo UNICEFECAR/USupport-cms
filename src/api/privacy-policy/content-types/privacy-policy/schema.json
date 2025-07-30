@@ -46,6 +46,16 @@
     "country": {
       "type": "customField",
       "customField": "plugin::country-select.country"
+    },
+    "global": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "boolean",
+      "default": false,
+      "required": false
     }
   }
 }
