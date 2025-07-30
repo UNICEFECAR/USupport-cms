@@ -15,26 +15,26 @@ module.exports = {
 
     if (global) {
       const existing = await strapi.db
-        .query("api::about-us-page.about-us-page")
+        .query("api::privacy-policy.privacy-policy")
         .findOne({
           where: { global: true, locale },
         });
 
       if (existing) {
         throw new ApplicationError(
-          `A global About Us page already exists for locale "${locale}".`
+          `A global Privacy Policy already exists for locale "${locale}".`
         );
       }
     } else if (country) {
       const existing = await strapi.db
-        .query("api::about-us-page.about-us-page")
+        .query("api::privacy-policy.privacy-policy")
         .findOne({
           where: { country, locale },
         });
 
       if (existing) {
         throw new ApplicationError(
-          `About Us page for ${country} already exists in "${locale}".`
+          `Privacy Policy for ${country} already exists in "${locale}".`
         );
       }
     }
@@ -45,7 +45,7 @@ module.exports = {
     const { global, country } = data;
 
     const currentRecord = await strapi.db
-      .query("api::about-us-page.about-us-page")
+      .query("api::privacy-policy.privacy-policy")
       .findOne({ where: { id: where.id } });
 
     const locale = currentRecord?.locale;
@@ -62,7 +62,7 @@ module.exports = {
 
     if (global) {
       const existingRecord = await strapi.db
-        .query("api::about-us-page.about-us-page")
+        .query("api::privacy-policy.privacy-policy")
         .findOne({
           where: {
             global: true,
@@ -72,12 +72,12 @@ module.exports = {
 
       if (existingRecord && existingRecord.id !== where.id) {
         throw new ApplicationError(
-          `A global About Us page already exists for locale "${locale}".`
+          `A global Privacy Policy already exists for locale "${locale}".`
         );
       }
     } else if (country) {
       const existingRecord = await strapi.db
-        .query("api::about-us-page.about-us-page")
+        .query("api::privacy-policy.privacy-policy")
         .findOne({
           where: {
             country,
@@ -87,7 +87,7 @@ module.exports = {
 
       if (existingRecord && existingRecord.id !== where.id) {
         throw new ApplicationError(
-          `An About Us page for ${country} already exists in locale "${locale}".`
+          `A Privacy Policy for ${country} already exists in locale "${locale}".`
         );
       }
     }
