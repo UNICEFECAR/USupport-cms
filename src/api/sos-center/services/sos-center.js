@@ -28,6 +28,8 @@ module.exports = createCoreService(
           .query("api::sos-center.sos-center")
           .findOne({ where: { id: ids[i] }, populate: true });
 
+        console.log("sosCenter", sosCenter);
+
         result[sosCenter.id][sosCenter.locale] = sosCenter.id;
         for (let j = 0; j < sosCenter.localizations.length; j++) {
           result[sosCenter.id][sosCenter.localizations[j].locale] =
