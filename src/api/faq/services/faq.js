@@ -20,16 +20,15 @@ module.exports = createCoreService("api::faq.faq", ({ strapi }) => ({
       result[id] = {};
     });
 
-    // Get all the sos centers with the ids from the query
+    // Get all the faq's with the ids from the query
     for (let i = 0; i < ids.length; i++) {
-      const sosCenter = await strapi.db
+      const faq = await strapi.db
         .query("api::faq.faq")
         .findOne({ where: { id: ids[i] }, populate: true });
 
-      result[sosCenter.id][sosCenter.locale] = sosCenter.id;
-      for (let j = 0; j < sosCenter.localizations.length; j++) {
-        result[sosCenter.id][sosCenter.localizations[j].locale] =
-          sosCenter.localizations[j].id;
+      result[faq.id][faq.locale] = faq.id;
+      for (let j = 0; j < faq.localizations.length; j++) {
+        result[faq.id][faq.localizations[j].locale] = faq.localizations[j].id;
       }
     }
 
