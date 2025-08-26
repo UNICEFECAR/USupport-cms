@@ -4,12 +4,14 @@ module.exports = {
   async beforeCreate(event) {
     const { data } = event.params;
     const { global, country, locale } = data;
+    console.log(global, country, locale);
 
     if (!locale) {
       throw new ApplicationError("Locale is required when creating.");
     }
 
     if (!global && !country) {
+      console.log("Please choose a country or mark as global.");
       throw new ApplicationError("Please choose a country or mark as global.");
     }
 
@@ -40,9 +42,24 @@ module.exports = {
     }
   },
 
+  //
+
   async beforeUpdate(event) {
     const { data, where } = event.params;
     const { global, country } = data;
+
+    // If only localizations are being updated or publish/unpublish - skip validation
+    if (
+      (Object.keys(data).length === 2 &&
+        data.localizations &&
+        data.updatedAt) ||
+      (Object.keys(data).length === 3 &&
+        data.updatedAt &&
+        data.updatedBy &&
+        data.hasOwnProperty("publishedAt"))
+    ) {
+      return;
+    }
 
     const currentRecord = await strapi.db
       .query("api::privacy-policy.privacy-policy")
