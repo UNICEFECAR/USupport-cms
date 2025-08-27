@@ -44,6 +44,19 @@ module.exports = {
     const { data, where } = event.params;
     const { global, country } = data;
 
+    // If only localizations are being updated or publish/unpublish - skip validation
+    if (
+      (Object.keys(data).length === 2 &&
+        data.localizations &&
+        data.updatedAt) ||
+      (Object.keys(data).length === 3 &&
+        data.updatedAt &&
+        data.updatedBy &&
+        data.hasOwnProperty("publishedAt"))
+    ) {
+      return;
+    }
+
     const currentRecord = await strapi.db
       .query("api::terms-of-use.terms-of-use")
       .findOne({ where: { id: where.id } });
