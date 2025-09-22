@@ -12,13 +12,18 @@
     "lint-fix": "eslint . --ext .js --fix"
   },
   "dependencies": {
-    "@strapi/plugin-i18n": "4.4.4",
-    "@strapi/plugin-users-permissions": "4.4.4",
+    "@_sh/strapi-plugin-ckeditor": "^3.0.9",
+    "@strapi/plugin-i18n": "4.25.22",
+    "@strapi/plugin-users-permissions": "4.25.22",
     "@strapi/provider-email-nodemailer": "^4.5.2",
     "@strapi/provider-upload-aws-s3": "^4.5.1",
-    "@strapi/strapi": "4.4.4",
+    "@strapi/strapi": "4.25.22",
     "pg": "8.6.0",
-    "strapi-plugin-country-select": "^1.0.0"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^5.3.4",
+    "strapi-plugin-country-select": "^1.0.0",
+    "styled-components": "^5.3.11"
   },
   "author": {
     "name": "7Digit Ltd."
