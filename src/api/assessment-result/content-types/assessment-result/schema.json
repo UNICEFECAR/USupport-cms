@@ -4,7 +4,7 @@
   "info": {
     "singularName": "assessment-result",
     "pluralName": "assessment-results",
-    "displayName": "Assessment Result",
+    "displayName": "Recommendation: Baseline Assessment Result",
     "description": ""
   },
   "options": {
