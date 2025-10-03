@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "mood_tracker_recomendations",
+  "info": {
+    "singularName": "mood-tracker-recomendation",
+    "pluralName": "mood-tracker-recomendations",
+    "displayName": "Recommendation: Mood Tracker",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "mood": {
+      "type": "enumeration",
+      "enum": [
+        "happy",
+        "sad",
+        "depressed",
+        "good",
+        "worried"
+      ]
+    },
+    "articles": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::article.article"
+    },
+    "podcasts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::podcast.podcast"
+    },
+    "videos": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::video.video"
+    }
+  }
+}
