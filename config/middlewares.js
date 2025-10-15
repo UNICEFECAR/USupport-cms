@@ -38,6 +38,7 @@ module.exports = [
         "x-country-alpha-2",
         "x-language-alpha-2",
         "x-platform",
+        "x-visitor-id",
         "Authorization",
       ],
       keepHeaderOnError: true,
