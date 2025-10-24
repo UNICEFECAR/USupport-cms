@@ -6,6 +6,7 @@
 
 const { createCoreController } = require("@strapi/strapi").factories;
 const { getIdsForSpecificLocales } = require("../../utils/utils.js");
+const fetch = require("node-fetch");
 
 module.exports = createCoreController("api::video.video", ({ strapi }) => ({
   async find(ctx) {
