@@ -54,9 +54,15 @@ module.exports = createCoreController("api::video.video", ({ strapi }) => ({
               // Extract Vimeo video ID from the URL
               let videoId = "";
               if (video.attributes.url.includes("vimeo.com/")) {
-                videoId = video.attributes.url
+                // Handle different Vimeo URL formats:
+                // https://vimeo.com/123456789
+                // https://vimeo.com/channels/staffpicks/123456789
+                // https://vimeo.com/groups/name/videos/123456789
+                const urlParts = video.attributes.url
                   .split("vimeo.com/")[1]
                   .split(/[?&]/)[0];
+                const parts = urlParts.split("/");
+                videoId = parts[parts.length - 1]; // Get the last part (should be the video ID)
               }
               if (videoId) {
                 // Fetch thumbnail from Vimeo API
