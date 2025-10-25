@@ -32,5 +32,13 @@ module.exports = {
         auth: false,
       },
     },
+    {
+      method: "GET",
+      path: "/podcasts/custom/category-ids",
+      handler: "podcast.getPodcastCategoryIds",
+      config: {
+        auth: false,
+      },
+    },
   ],
 };

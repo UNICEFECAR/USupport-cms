@@ -57,5 +57,13 @@ module.exports = {
         auth: false,
       },
     },
+    {
+      method: "GET",
+      path: "/articles/custom/category-ids",
+      handler: "article.getArticleCategoryIds",
+      config: {
+        auth: false,
+      },
+    },
   ],
 };

@@ -32,5 +32,13 @@ module.exports = {
         auth: false,
       },
     },
+    {
+      method: "GET",
+      path: "/videos/custom/category-ids",
+      handler: "video.getVideoCategoryIds",
+      config: {
+        auth: false,
+      },
+    },
   ],
 };
