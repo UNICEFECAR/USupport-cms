@@ -209,4 +209,51 @@ module.exports = createCoreController("api::podcast.podcast", ({ strapi }) => ({
       ctx.body = { error: err.message };
     }
   },
+
+  async getPodcastCategoryIds(ctx) {
+    /**
+     * #route   GET /podcasts/custom/category-ids
+     * #desc    Get all unique category IDs from podcasts for a specific locale
+     */
+    try {
+      const { locale, ids } = ctx.query;
+
+      const whereClause = {
+        locale: locale,
+        publishedAt: { $notNull: true },
+      };
+
+      // Add podcast IDs filter if provided
+      if (ids) {
+        const podcastIdsArray = ids.split(",").map((id) => parseInt(id));
+        whereClause.id = { $in: podcastIdsArray };
+      }
+
+      // Query podcasts with only category populated, no other fields
+      const podcasts = await strapi.db.query("api::podcast.podcast").findMany({
+        where: whereClause,
+        select: [], // Select no fields from podcast itself
+        populate: {
+          category: {
+            select: ["id"], // Only select category ID
+          },
+        },
+      });
+
+      // Extract unique category IDs, filtering out null/undefined
+      const categoryIds = [
+        ...new Set(
+          podcasts
+            .map((podcast) => podcast.category?.id)
+            .filter((id) => id != null)
+        ),
+      ];
+
+      ctx.body = categoryIds;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
 }));

@@ -268,6 +268,60 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
     }
   },
 
+  async getArticleCategoryIds(ctx) {
+    /**
+     * #route   GET /articles/category-ids
+     * #desc    Get all unique category IDs from articles for a specific locale, filtered by age group and article IDs
+     */
+    try {
+      const { locale, ageGroupId, ids } = ctx.query;
+
+      const whereClause = {
+        locale: locale,
+        publishedAt: { $notNull: true },
+      };
+
+      // Add age group filter if provided
+      if (ageGroupId) {
+        whereClause.age_groups = { id: ageGroupId };
+      }
+
+      // Add article IDs filter if provided
+      if (ids) {
+        const articleIdsArray = ids.split(",").map((id) => parseInt(id));
+        whereClause.id = { $in: articleIdsArray };
+      }
+
+      // Query articles with only category populated, no other fields
+      const articles = await strapi.db.query("api::article.article").findMany({
+        where: whereClause,
+        select: [], // Select no fields from article itself
+        populate: {
+          category: {
+            select: ["id"], // Only select category ID
+          },
+        },
+      });
+
+      console.log(articles);
+
+      // Extract unique category IDs, filtering out null/undefined
+      const categoryIds = [
+        ...new Set(
+          articles
+            .map((article) => article.category?.id)
+            .filter((id) => id != null)
+        ),
+      ];
+
+      ctx.body = categoryIds;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
+
   async getRecommendedArticlesForCategory(ctx) {
     try {
       const {

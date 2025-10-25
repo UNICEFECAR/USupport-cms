@@ -226,8 +226,6 @@ module.exports = createCoreController(
             ...(category.localizations || []).map((loc) => loc.id),
           ];
 
-          console.log(allLocalizationIds);
-
           // Mark all related localizations as processed
           allLocalizationIds.forEach((id) => {
             processedCategoryIds.add(id);
