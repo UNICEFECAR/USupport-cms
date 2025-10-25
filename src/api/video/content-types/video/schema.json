@@ -40,7 +40,7 @@
         }
       },
       "type": "string",
-      "required": true
+      "required": false
     },
     "thumbnail": {
       "type": "media",
@@ -113,6 +113,14 @@
       },
       "type": "biginteger",
       "default": "0"
+    },
+    "aws_url": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string"
     }
   }
 }
