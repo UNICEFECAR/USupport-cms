@@ -26,6 +26,11 @@ module.exports = createCoreController(
           const currentData = termsOfUse[i];
           if (currentData.country === query.country) {
             result = currentData[query.platform];
+          } else if (
+            currentData.is_playandheal &&
+            query.filters?.is_playandheal
+          ) {
+            result = currentData[query.platform];
           } else if (currentData.global && query.filters?.global) {
             result = currentData[query.platform];
           }

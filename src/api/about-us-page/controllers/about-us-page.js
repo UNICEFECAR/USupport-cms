@@ -20,12 +20,20 @@ module.exports = createCoreController(
           .query("api::about-us-page.about-us-page")
           .findMany({ where: { locale: query.locale } });
 
+        console.log(query, "query");
+
         let result = null;
         for (let i = 0; i < aboutUsPage.length; i++) {
           const currentData = aboutUsPage[i];
+          console.log(currentData.is_playandheal, "currentData");
           if (currentData.country === query.country) {
             result = currentData;
           } else if (currentData.global && query.filters?.global) {
+            result = currentData;
+          } else if (
+            currentData.is_playandheal &&
+            query.filters?.is_playandheal
+          ) {
             result = currentData;
           }
         }

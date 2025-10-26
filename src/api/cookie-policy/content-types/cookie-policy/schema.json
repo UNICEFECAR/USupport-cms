@@ -62,6 +62,15 @@
       "type": "boolean",
       "default": false,
       "required": true
+    },
+    "is_playandheal": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "boolean",
+      "default": false
     }
   }
 }

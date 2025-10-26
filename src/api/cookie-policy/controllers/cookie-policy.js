@@ -22,12 +22,21 @@ module.exports = createCoreController(
           .findMany({ where: { locale: query.locale } });
 
         let result = null;
-
+        console.log(query);
         if (query.country === "global") {
           // Look for cookie policy with global flag set to true
           for (let i = 0; i < cookiePolicy.length; i++) {
             const currentData = cookiePolicy[i];
             if (currentData.global === true) {
+              result = currentData[query.platform];
+              break;
+            }
+          }
+        } else if (query.filters?.is_playandheal) {
+          // Look for cookie policy with play and heal flag set to true
+          for (let i = 0; i < cookiePolicy.length; i++) {
+            const currentData = cookiePolicy[i];
+            if (currentData.is_playandheal === true) {
               result = currentData[query.platform];
               break;
             }
