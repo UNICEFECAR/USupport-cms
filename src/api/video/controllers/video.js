@@ -17,7 +17,6 @@ module.exports = createCoreController("api::video.video", ({ strapi }) => ({
     const { query } = ctx;
     let availableLocales = {};
     let localizedIds = [];
-    console.log(query.ids, "IDS");
     if (query.ids) {
       availableLocales = await strapi
         .service("api::video.video")
@@ -27,13 +26,19 @@ module.exports = createCoreController("api::video.video", ({ strapi }) => ({
     }
 
     if (!query.isForAdmin) {
-      ctx.query.filters = {
-        ...ctx.query.filters,
-        id: {
-          ...ctx.query.filters?.id,
-          $in: localizedIds,
-        },
-      };
+      if (localizedIds.length > 0) {
+        ctx.query.filters = {
+          ...ctx.query.filters,
+          id: {
+            ...ctx.query.filters?.id,
+            $in: localizedIds,
+          },
+        };
+      } else {
+        // No localized videos found for requested locale
+        // Return empty result instead of all videos
+        return { data: [], meta: { availableLocales, localizedIds } };
+      }
     }
 
     let { data, meta } = await super.find(ctx);
@@ -272,6 +277,51 @@ module.exports = createCoreController("api::video.video", ({ strapi }) => ({
           },
         });
       ctx.body = resultAfterUpdate;
+    } catch (err) {
+      console.log(err);
+      ctx.status = 500;
+      ctx.body = { error: err.message };
+    }
+  },
+
+  async getVideoCategoryIds(ctx) {
+    /**
+     * #route   GET /videos/custom/category-ids
+     * #desc    Get all unique category IDs from videos for a specific locale
+     */
+    try {
+      const { locale, ids } = ctx.query;
+
+      const whereClause = {
+        locale: locale,
+        publishedAt: { $notNull: true },
+      };
+
+      // Add video IDs filter if provided
+      if (ids) {
+        const videoIdsArray = ids.split(",").map((id) => parseInt(id));
+        whereClause.id = { $in: videoIdsArray };
+      }
+
+      // Query videos with only category populated, no other fields
+      const videos = await strapi.db.query("api::video.video").findMany({
+        where: whereClause,
+        select: [], // Select no fields from video itself
+        populate: {
+          category: {
+            select: ["id"], // Only select category ID
+          },
+        },
+      });
+
+      // Extract unique category IDs, filtering out null/undefined
+      const categoryIds = [
+        ...new Set(
+          videos.map((video) => video.category?.id).filter((id) => id != null)
+        ),
+      ];
+
+      ctx.body = categoryIds;
     } catch (err) {
       console.log(err);
       ctx.status = 500;
