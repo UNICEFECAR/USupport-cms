@@ -3,14 +3,14 @@ const { ApplicationError } = require("@strapi/utils").errors;
 module.exports = {
   async beforeCreate(event) {
     const { data } = event.params;
-    const { global, country, locale } = data;
+    const { global, country, locale, is_playandheal } = data;
     console.log(global, country, locale);
 
     if (!locale) {
       throw new ApplicationError("Locale is required when creating.");
     }
 
-    if (!global && !country) {
+    if (!global && !country && !is_playandheal) {
       console.log("Please choose a country or mark as global.");
       throw new ApplicationError("Please choose a country or mark as global.");
     }
@@ -25,6 +25,18 @@ module.exports = {
       if (existing) {
         throw new ApplicationError(
           `A global Privacy Policy already exists for locale "${locale}".`
+        );
+      }
+    } else if (is_playandheal) {
+      const existing = await strapi.db
+        .query("api::privacy-policy.privacy-policy")
+        .findOne({
+          where: { is_playandheal: true, locale },
+        });
+
+      if (existing) {
+        throw new ApplicationError(
+          `A Play and Heal Privacy Policy already exists for locale "${locale}".`
         );
       }
     } else if (country) {
@@ -42,16 +54,17 @@ module.exports = {
     }
   },
 
-  //
-
   async beforeUpdate(event) {
     const { data, where } = event.params;
-    const { global, country } = data;
+    const { global, country, is_playandheal } = data;
 
     // If only localizations are being updated or publish/unpublish - skip validation
     if (
       (Object.keys(data).length === 2 &&
         data.localizations &&
+        data.updatedAt) ||
+      (Object.keys(data).length === 2 &&
+        data.hasOwnProperty("country") &&
         data.updatedAt) ||
       (Object.keys(data).length === 3 &&
         data.updatedAt &&
@@ -73,7 +86,7 @@ module.exports = {
       );
     }
 
-    if (!global && !country) {
+    if (!global && !country && !is_playandheal) {
       throw new ApplicationError("Please choose a country or mark as global.");
     }
 
@@ -90,6 +103,21 @@ module.exports = {
       if (existingRecord && existingRecord.id !== where.id) {
         throw new ApplicationError(
           `A global Privacy Policy already exists for locale "${locale}".`
+        );
+      }
+    } else if (is_playandheal) {
+      const existingRecord = await strapi.db
+        .query("api::privacy-policy.privacy-policy")
+        .findOne({
+          where: {
+            is_playandheal: true,
+            locale,
+          },
+        });
+
+      if (existingRecord && existingRecord.id !== where.id) {
+        throw new ApplicationError(
+          `A Play and Heal Privacy Policy already exists for locale "${locale}".`
         );
       }
     } else if (country) {
