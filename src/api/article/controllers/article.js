@@ -195,6 +195,17 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
     meta.availableLocales = availableLocales;
     meta.localizedIds = localizedIds;
 
+    data.forEach((article) => {
+      article.attributes.createdBy = {
+        data: {
+          attributes: {
+            firstname: article.attributes.author,
+            lastname: "",
+          },
+        },
+      };
+    });
+
     return { data, meta };
   },
 
