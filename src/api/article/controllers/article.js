@@ -271,41 +271,62 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
   async getArticleCategoryIds(ctx) {
     /**
      * #route   GET /articles/category-ids
-     * #desc    Get all unique category IDs from articles for a specific locale, filtered by age group and article IDs
+     * #desc    Get all unique category IDs from articles for a specific locale,
+     *          filtered by age group and article IDs
      */
     try {
-      const { locale, ageGroupId, ids } = ctx.query;
+      const { locale = "en", ageGroupId, ids } = ctx.query;
 
+      if (!ids) {
+        ctx.throw(400, "Missing 'ids' parameter");
+      }
+
+      const articleIdsArray = ids.split(",").map((id) => parseInt(id));
+
+      let targetArticleIds = [...articleIdsArray]; // default to English IDs
+
+      // ✅ If locale is NOT 'en', find localized entries that correspond to the English ones
+      if (locale !== "en") {
+        const localizedArticles = await strapi.db
+          .query("api::article.article")
+          .findMany({
+            where: {
+              locale,
+              localizations: {
+                id: { $in: articleIdsArray },
+              },
+              publishedAt: { $notNull: true },
+            },
+            select: ["id"],
+          });
+
+        // Replace target IDs with localized ones
+        targetArticleIds = localizedArticles.map((a) => a.id);
+      }
+
+      // Build the main where clause
       const whereClause = {
-        locale: locale,
+        locale,
         publishedAt: { $notNull: true },
+        id: { $in: targetArticleIds },
       };
 
-      // Add age group filter if provided
       if (ageGroupId) {
         whereClause.age_groups = { id: ageGroupId };
       }
 
-      // Add article IDs filter if provided
-      if (ids) {
-        const articleIdsArray = ids.split(",").map((id) => parseInt(id));
-        whereClause.id = { $in: articleIdsArray };
-      }
-
-      // Query articles with only category populated, no other fields
+      // Query articles (only categories populated)
       const articles = await strapi.db.query("api::article.article").findMany({
         where: whereClause,
-        select: [], // Select no fields from article itself
+        select: [],
         populate: {
           category: {
-            select: ["id"], // Only select category ID
+            select: ["id"],
           },
         },
       });
 
-      console.log(articles);
-
-      // Extract unique category IDs, filtering out null/undefined
+      // Extract unique category IDs
       const categoryIds = [
         ...new Set(
           articles
@@ -316,7 +337,7 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
 
       ctx.body = categoryIds;
     } catch (err) {
-      console.log(err);
+      console.error(err);
       ctx.status = 500;
       ctx.body = { error: err.message };
     }
