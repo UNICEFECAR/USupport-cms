@@ -236,6 +236,17 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
 
     let res = await super.findOne(ctx);
 
+    if (res?.data) {
+      res.data.attributes.createdBy = {
+        data: {
+          attributes: {
+            firstname: res.data.attributes.author,
+            lastname: "",
+          },
+        },
+      };
+    }
+
     return res;
   },
 
