@@ -67,6 +67,7 @@ jobs:
             echo "  SMTP_PORT: '${{ secrets.SMTP_PORT }}'"
             echo "  SMTP_USERNAME: '${{ secrets.SMTP_USERNAME }}'"
             echo "  SMTP_PASSWORD: '${{ secrets.SMTP_PASSWORD }}'"
+            echo "  API_URL: '${{ vars.API_URL }}'"
           } > kube-config/prod/secrets.yaml
 
       - name: Deploy to Kubernetes
