@@ -92,8 +92,6 @@ module.exports = createCoreController(
           urbanRural,
         });
 
-        console.log("contentEngagements", contentEngagements);
-
         // Process engagements to count all engagement metrics per content item
         const contentMetrics = new Map();
         contentEngagements.forEach((engagement) => {
@@ -124,6 +122,7 @@ module.exports = createCoreController(
         let allArticles = [];
         let allVideos = [];
         let allPodcasts = [];
+
         if (contentType === "articles" || contentType === "all") {
           allArticles = await strapi.db.query("api::article.article").findMany({
             populate: {
@@ -219,31 +218,62 @@ module.exports = createCoreController(
 
         allArticles.forEach((article) => {
           const categoryId = article.category?.id;
+          const engagements = contentMetrics.get(`article_${article.id}`) || {
+            likes: 0,
+            dislikes: 0,
+            views: 0,
+            downloads: 0,
+            shares: 0,
+          };
+
           if (categoryId) {
             if (!articlesByCategory.has(categoryId)) {
               articlesByCategory.set(categoryId, []);
             }
-            articlesByCategory.get(categoryId).push(article);
+            articlesByCategory.get(categoryId).push({
+              ...article,
+              ...engagements,
+            });
           }
         });
 
         allVideos.forEach((video) => {
           const categoryId = video.category?.id;
+          const engagements = contentMetrics.get(`video_${video.id}`) || {
+            likes: 0,
+            dislikes: 0,
+            views: 0,
+            downloads: 0,
+            shares: 0,
+          };
           if (categoryId) {
             if (!videosByCategory.has(categoryId)) {
               videosByCategory.set(categoryId, []);
             }
-            videosByCategory.get(categoryId).push(video);
+            videosByCategory.get(categoryId).push({
+              ...video,
+              ...engagements,
+            });
           }
         });
 
         allPodcasts.forEach((podcast) => {
           const categoryId = podcast.category?.id;
+          const engagements = contentMetrics.get(`podcast_${podcast.id}`) || {
+            likes: 0,
+            dislikes: 0,
+            views: 0,
+            downloads: 0,
+            shares: 0,
+          };
           if (categoryId) {
             if (!podcastsByCategory.has(categoryId)) {
               podcastsByCategory.set(categoryId, []);
             }
-            podcastsByCategory.get(categoryId).push(podcast);
+            podcastsByCategory.get(categoryId).push({
+              ...podcast,
+              ...engagements,
+            });
           }
         });
 
@@ -263,9 +293,9 @@ module.exports = createCoreController(
             (version) => version.locale === requestedLanguage
           );
           if (requestedVersion) {
-            console.log(
-              `Found ${requestedLanguage} version: "${requestedVersion.name}"`
-            );
+            // console.log(
+            //   `Found ${requestedLanguage} version: "${requestedVersion.name}"`
+            // );
             return requestedVersion.name;
           }
 
@@ -274,16 +304,16 @@ module.exports = createCoreController(
             (version) => version.locale === "en"
           );
           if (englishVersion) {
-            console.log(
-              `Fallback to English version: "${englishVersion.name}"`
-            );
+            // console.log(
+            //   `Fallback to English version: "${englishVersion.name}"`
+            // );
             return englishVersion.name;
           }
 
           // Final fallback: use the main category name
-          console.log(
-            `Using main category name as fallback: "${category.name}"`
-          );
+          // console.log(
+          //   `Using main category name as fallback: "${category.name}"`
+          // );
           return category.name;
         };
 
@@ -403,7 +433,7 @@ module.exports = createCoreController(
             localizationIds: allLocalizationIds,
             articles: {
               count: categoryArticles.length,
-              reads: 0,
+              views: 0,
               downloads: 0,
               shares: 0,
               likes: 0,
@@ -433,33 +463,32 @@ module.exports = createCoreController(
           };
 
           const { articles, podcasts, videos } = statistics;
-
           // Calculate article statistics
           categoryArticles.forEach((article) => {
-            articles.reads += parseInt(article.read_count || 0);
-            articles.downloads += parseInt(article.download_count || 0);
-            articles.shares += parseInt(article.share_count || 0);
+            articles.views += parseInt(article.views || 0);
+            articles.downloads += parseInt(article.downloads || 0);
+            articles.shares += parseInt(article.shares || 0);
             articles.likes += parseInt(article.likes || 0);
-            articles.totalDislikes += parseInt(article.dislikes || 0);
+            articles.dislikes += parseInt(article.dislikes || 0);
           });
 
           // Calculate video statistics
           categoryVideos.forEach((video) => {
-            videos.views += parseInt(video.view_count || 0);
-            videos.shares += parseInt(video.share_count || 0);
+            videos.views += parseInt(video.views || 0);
+            videos.shares += parseInt(video.shares || 0);
             videos.likes += parseInt(video.likes || 0);
             videos.dislikes += parseInt(video.dislikes || 0);
           });
 
           // Calculate podcast statistics
           categoryPodcasts.forEach((podcast) => {
-            podcasts.views += parseInt(podcast.view_count || 0);
-            podcasts.shares += parseInt(podcast.share_count || 0);
+            podcasts.views += parseInt(podcast.views || 0);
+            podcasts.shares += parseInt(podcast.shares || 0);
             podcasts.likes += parseInt(podcast.likes || 0);
             podcasts.dislikes += parseInt(podcast.dislikes || 0);
           });
 
-          statistics.views = articles.reads + videos.views + podcasts.views;
+          statistics.views = articles.views + videos.views + podcasts.views;
 
           statistics.shares = articles.shares + videos.shares + podcasts.shares;
 
@@ -498,8 +527,6 @@ module.exports = createCoreController(
             category.hasContent = true;
           }
         });
-
-        console.log("allStatistics", allStatistics);
 
         // Sort by name descending
         allStatistics = allStatistics
