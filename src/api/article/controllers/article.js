@@ -294,50 +294,54 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
     /**
      * #route   GET /articles/category-ids
      * #desc    Get all unique category IDs from articles for a specific locale,
-     *          filtered by age group and article IDs
+     *          optionally filtered by age group and/or specific article IDs
      */
     try {
       const { locale = "en", ageGroupId, ids } = ctx.query;
 
-      if (!ids) {
-        ctx.throw(400, "Missing 'ids' parameter");
-      }
+      let targetArticleIds = null; // null = do NOT filter by IDs
 
-      const articleIdsArray = ids.split(",").map((id) => parseInt(id));
+      // If the client provides IDs, process them
+      if (ids) {
+        const articleIdsArray = ids.split(",").map((id) => parseInt(id));
 
-      let targetArticleIds = [...articleIdsArray]; // default to English IDs
+        targetArticleIds = [...articleIdsArray]; // default to English IDs
 
-      // ✅ If locale is NOT 'en', find localized entries that correspond to the English ones
-      if (locale !== "en") {
-        const localizedArticles = await strapi.db
-          .query("api::article.article")
-          .findMany({
-            where: {
-              locale,
-              localizations: {
-                id: { $in: articleIdsArray },
+        // If locale != 'en', resolve localized versions
+        if (locale !== "en") {
+          const localizedArticles = await strapi.db
+            .query("api::article.article")
+            .findMany({
+              where: {
+                locale,
+                localizations: {
+                  id: { $in: articleIdsArray },
+                },
+                publishedAt: { $notNull: true },
               },
-              publishedAt: { $notNull: true },
-            },
-            select: ["id"],
-          });
+              select: ["id"],
+            });
 
-        // Replace target IDs with localized ones
-        targetArticleIds = localizedArticles.map((a) => a.id);
+          targetArticleIds = localizedArticles.map((a) => a.id);
+        }
       }
 
-      // Build the main where clause
+      // Build main query
       const whereClause = {
         locale,
         publishedAt: { $notNull: true },
-        id: { $in: targetArticleIds },
       };
+
+      // Only add ID filtering if IDs were provided
+      if (targetArticleIds && targetArticleIds.length > 0) {
+        whereClause.id = { $in: targetArticleIds };
+      }
 
       if (ageGroupId) {
         whereClause.age_groups = { id: ageGroupId };
       }
 
-      // Query articles (only categories populated)
+      // Fetch articles with categories
       const articles = await strapi.db.query("api::article.article").findMany({
         where: whereClause,
         select: [],
