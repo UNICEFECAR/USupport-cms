@@ -15,6 +15,8 @@ const fetchCountryContentEngagements = async ({
   sex,
   yearOfBirth,
   urbanRural,
+  startDate,
+  endDate,
 }) => {
   try {
     const queryParams = new URLSearchParams();
@@ -22,6 +24,8 @@ const fetchCountryContentEngagements = async ({
     if (sex) queryParams.append("sex", sex);
     if (yearOfBirth) queryParams.append("yearOfBirth", yearOfBirth);
     if (urbanRural) queryParams.append("urbanRural", urbanRural);
+    if (startDate) queryParams.append("startDate", startDate);
+    if (endDate) queryParams.append("endDate", endDate);
 
     const response = await fetch(
       `${API_ENDPOINT}/country-content-engagements?${queryParams.toString()}`,
@@ -70,6 +74,8 @@ module.exports = createCoreController(
         const sex = ctx.query.sex;
         const yearOfBirth = ctx.query.yearOfBirth;
         const urbanRural = ctx.query.urbanRural;
+        const startDate = ctx.query.startDate;
+        const endDate = ctx.query.endDate;
 
         // Get all categories with their localizations
         const categories = await strapi.db
@@ -90,6 +96,8 @@ module.exports = createCoreController(
           sex,
           yearOfBirth,
           urbanRural,
+          startDate,
+          endDate,
         });
 
         // Process engagements to count all engagement metrics per content item
