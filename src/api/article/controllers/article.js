@@ -302,8 +302,23 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
       let targetArticleIds = null; // null = do NOT filter by IDs
 
       // If the client provides IDs, process them
-      if (ids) {
-        const articleIdsArray = ids.split(",").map((id) => parseInt(id));
+      if (ids !== undefined && ids !== null) {
+        // Handle empty string or whitespace-only string
+        if (ids === "" || ids.trim() === "") {
+          ctx.body = [];
+          return;
+        }
+
+        const articleIdsArray = ids
+          .split(",")
+          .map((id) => parseInt(id))
+          .filter((id) => !isNaN(id));
+
+        // If no valid IDs after parsing, return empty array
+        if (articleIdsArray.length === 0) {
+          ctx.body = [];
+          return;
+        }
 
         targetArticleIds = [...articleIdsArray]; // default to English IDs
 
@@ -323,6 +338,12 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
             });
 
           targetArticleIds = localizedArticles.map((a) => a.id);
+
+          // If no localized articles found for the provided IDs, return empty array
+          if (targetArticleIds.length === 0) {
+            ctx.body = [];
+            return;
+          }
         }
       }
 
@@ -332,7 +353,7 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
         publishedAt: { $notNull: true },
       };
 
-      // Only add ID filtering if IDs were provided
+      // Only add ID filtering if IDs were provided and valid
       if (targetArticleIds && targetArticleIds.length > 0) {
         whereClause.id = { $in: targetArticleIds };
       }
