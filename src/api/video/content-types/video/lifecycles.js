@@ -1,5 +1,10 @@
+const { validateEnglishLocaleFirst } = require("../../../utils/utils");
+
 module.exports = {
   async beforeCreate(ctx) {
+    // Validate English locale exists first
+    await validateEnglishLocaleFirst(ctx, "api::video.video");
+
     const { data } = ctx.params;
     if (data) {
       data.likes = 0;
