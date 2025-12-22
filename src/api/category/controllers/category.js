@@ -77,6 +77,11 @@ module.exports = createCoreController(
         const startDate = ctx.query.startDate;
         const endDate = ctx.query.endDate;
 
+        // Check if startDate exists and is before November 5th, 2025
+        const shouldAddLegacyViews =
+          !startDate ||
+          (startDate && new Date(startDate) < new Date("2025-11-05"));
+
         // Get all categories with their localizations
         const categories = await strapi.db
           .query("api::category.category")
@@ -474,6 +479,9 @@ module.exports = createCoreController(
           // Calculate article statistics
           categoryArticles.forEach((article) => {
             articles.views += parseInt(article.views || 0);
+            if (shouldAddLegacyViews) {
+              articles.views += parseInt(article.read_count || 0);
+            }
             articles.downloads += parseInt(article.downloads || 0);
             articles.shares += parseInt(article.shares || 0);
             articles.likes += parseInt(article.likes || 0);
@@ -483,6 +491,9 @@ module.exports = createCoreController(
           // Calculate video statistics
           categoryVideos.forEach((video) => {
             videos.views += parseInt(video.views || 0);
+            if (shouldAddLegacyViews) {
+              videos.views += parseInt(video.view_count || 0);
+            }
             videos.shares += parseInt(video.shares || 0);
             videos.likes += parseInt(video.likes || 0);
             videos.dislikes += parseInt(video.dislikes || 0);
@@ -491,6 +502,9 @@ module.exports = createCoreController(
           // Calculate podcast statistics
           categoryPodcasts.forEach((podcast) => {
             podcasts.views += parseInt(podcast.views || 0);
+            if (shouldAddLegacyViews) {
+              podcasts.views += parseInt(podcast.view_count || 0);
+            }
             podcasts.shares += parseInt(podcast.shares || 0);
             podcasts.likes += parseInt(podcast.likes || 0);
             podcasts.dislikes += parseInt(podcast.dislikes || 0);
