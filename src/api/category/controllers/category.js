@@ -143,7 +143,7 @@ module.exports = createCoreController(
                 select: ["id"],
               },
             },
-            select: ["id"],
+            select: ["id", "read_count"],
           });
 
           // Add engagement metrics from engagements data
@@ -155,6 +155,9 @@ module.exports = createCoreController(
               downloads: 0,
               shares: 0,
             };
+            if (shouldAddLegacyViews) {
+              metrics.views += parseInt(article.read_count || 0);
+            }
             return {
               ...article,
               likes: metrics.likes,
@@ -173,7 +176,7 @@ module.exports = createCoreController(
                 select: ["id"],
               },
             },
-            select: ["id"],
+            select: ["id", "view_count"],
           });
 
           // Add engagement metrics from engagements data
@@ -185,6 +188,9 @@ module.exports = createCoreController(
               downloads: 0,
               shares: 0,
             };
+            if (shouldAddLegacyViews) {
+              metrics.views += parseInt(video.view_count || 0);
+            }
             return {
               ...video,
               likes: metrics.likes,
@@ -202,7 +208,7 @@ module.exports = createCoreController(
                 select: ["id"],
               },
             },
-            select: ["id"],
+            select: ["id", "view_count"],
           });
 
           // Add engagement metrics from engagements data
@@ -214,6 +220,9 @@ module.exports = createCoreController(
               downloads: 0,
               shares: 0,
             };
+            if (shouldAddLegacyViews) {
+              metrics.views += parseInt(podcast.view_count || 0);
+            }
             return {
               ...podcast,
               likes: metrics.likes,
