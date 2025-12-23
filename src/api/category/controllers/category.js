@@ -148,13 +148,17 @@ module.exports = createCoreController(
 
           // Add engagement metrics from engagements data
           allArticles = allArticles.map((article) => {
-            const metrics = contentMetrics.get(`article_${article.id}`) || {
-              likes: 0,
-              dislikes: 0,
-              views: 0,
-              downloads: 0,
-              shares: 0,
-            };
+            const originalMetrics = contentMetrics.get(`article_${article.id}`);
+            // Create a copy to avoid mutating the original Map object
+            const metrics = originalMetrics
+              ? { ...originalMetrics }
+              : {
+                  likes: 0,
+                  dislikes: 0,
+                  views: 0,
+                  downloads: 0,
+                  shares: 0,
+                };
             if (shouldAddLegacyViews) {
               metrics.views += parseInt(article.read_count || 0);
             }
@@ -181,13 +185,17 @@ module.exports = createCoreController(
 
           // Add engagement metrics from engagements data
           allVideos = allVideos.map((video) => {
-            const metrics = contentMetrics.get(`video_${video.id}`) || {
-              likes: 0,
-              dislikes: 0,
-              views: 0,
-              downloads: 0,
-              shares: 0,
-            };
+            const originalMetrics = contentMetrics.get(`video_${video.id}`);
+            // Create a copy to avoid mutating the original Map object
+            const metrics = originalMetrics
+              ? { ...originalMetrics }
+              : {
+                  likes: 0,
+                  dislikes: 0,
+                  views: 0,
+                  downloads: 0,
+                  shares: 0,
+                };
             if (shouldAddLegacyViews) {
               metrics.views += parseInt(video.view_count || 0);
             }
@@ -213,13 +221,17 @@ module.exports = createCoreController(
 
           // Add engagement metrics from engagements data
           allPodcasts = allPodcasts.map((podcast) => {
-            const metrics = contentMetrics.get(`podcast_${podcast.id}`) || {
-              likes: 0,
-              dislikes: 0,
-              views: 0,
-              downloads: 0,
-              shares: 0,
-            };
+            const originalMetrics = contentMetrics.get(`podcast_${podcast.id}`);
+            // Create a copy to avoid mutating the original Map object
+            const metrics = originalMetrics
+              ? { ...originalMetrics }
+              : {
+                  likes: 0,
+                  dislikes: 0,
+                  views: 0,
+                  downloads: 0,
+                  shares: 0,
+                };
             if (shouldAddLegacyViews) {
               metrics.views += parseInt(podcast.view_count || 0);
             }
