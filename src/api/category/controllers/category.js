@@ -240,62 +240,31 @@ module.exports = createCoreController(
 
         allArticles.forEach((article) => {
           const categoryId = article.category?.id;
-          const engagements = contentMetrics.get(`article_${article.id}`) || {
-            likes: 0,
-            dislikes: 0,
-            views: 0,
-            downloads: 0,
-            shares: 0,
-          };
-
           if (categoryId) {
             if (!articlesByCategory.has(categoryId)) {
               articlesByCategory.set(categoryId, []);
             }
-            articlesByCategory.get(categoryId).push({
-              ...article,
-              ...engagements,
-            });
+            articlesByCategory.get(categoryId).push(article);
           }
         });
 
         allVideos.forEach((video) => {
           const categoryId = video.category?.id;
-          const engagements = contentMetrics.get(`video_${video.id}`) || {
-            likes: 0,
-            dislikes: 0,
-            views: 0,
-            downloads: 0,
-            shares: 0,
-          };
           if (categoryId) {
             if (!videosByCategory.has(categoryId)) {
               videosByCategory.set(categoryId, []);
             }
-            videosByCategory.get(categoryId).push({
-              ...video,
-              ...engagements,
-            });
+            videosByCategory.get(categoryId).push(video);
           }
         });
 
         allPodcasts.forEach((podcast) => {
           const categoryId = podcast.category?.id;
-          const engagements = contentMetrics.get(`podcast_${podcast.id}`) || {
-            likes: 0,
-            dislikes: 0,
-            views: 0,
-            downloads: 0,
-            shares: 0,
-          };
           if (categoryId) {
             if (!podcastsByCategory.has(categoryId)) {
               podcastsByCategory.set(categoryId, []);
             }
-            podcastsByCategory.get(categoryId).push({
-              ...podcast,
-              ...engagements,
-            });
+            podcastsByCategory.get(categoryId).push(podcast);
           }
         });
 
@@ -485,36 +454,27 @@ module.exports = createCoreController(
           };
 
           const { articles, podcasts, videos } = statistics;
-          // Calculate article statistics
+          // Calculate article statistics (read_count already includes legacy views if applicable)
           categoryArticles.forEach((article) => {
-            articles.views += parseInt(article.views || 0);
-            if (shouldAddLegacyViews) {
-              articles.views += parseInt(article.read_count || 0);
-            }
-            articles.downloads += parseInt(article.downloads || 0);
-            articles.shares += parseInt(article.shares || 0);
+            articles.views += parseInt(article.read_count || 0);
+            articles.downloads += parseInt(article.download_count || 0);
+            articles.shares += parseInt(article.share_count || 0);
             articles.likes += parseInt(article.likes || 0);
             articles.dislikes += parseInt(article.dislikes || 0);
           });
 
-          // Calculate video statistics
+          // Calculate video statistics (view_count already includes legacy views if applicable)
           categoryVideos.forEach((video) => {
-            videos.views += parseInt(video.views || 0);
-            if (shouldAddLegacyViews) {
-              videos.views += parseInt(video.view_count || 0);
-            }
-            videos.shares += parseInt(video.shares || 0);
+            videos.views += parseInt(video.view_count || 0);
+            videos.shares += parseInt(video.share_count || 0);
             videos.likes += parseInt(video.likes || 0);
             videos.dislikes += parseInt(video.dislikes || 0);
           });
 
-          // Calculate podcast statistics
+          // Calculate podcast statistics (view_count already includes legacy views if applicable)
           categoryPodcasts.forEach((podcast) => {
-            podcasts.views += parseInt(podcast.views || 0);
-            if (shouldAddLegacyViews) {
-              podcasts.views += parseInt(podcast.view_count || 0);
-            }
-            podcasts.shares += parseInt(podcast.shares || 0);
+            podcasts.views += parseInt(podcast.view_count || 0);
+            podcasts.shares += parseInt(podcast.share_count || 0);
             podcasts.likes += parseInt(podcast.likes || 0);
             podcasts.dislikes += parseInt(podcast.dislikes || 0);
           });
