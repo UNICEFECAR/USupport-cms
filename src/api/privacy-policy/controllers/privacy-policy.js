@@ -22,6 +22,7 @@ module.exports = createCoreController(
           .findMany({ where: { locale: query.locale } });
 
         let result = null;
+        let data = null;
         for (let i = 0; i < privacyPolicies.length; i++) {
           const currentData = privacyPolicies[i];
           if (currentData.country === query.country) {
@@ -31,12 +32,14 @@ module.exports = createCoreController(
             query.filters?.is_playandheal
           ) {
             result = currentData[query.platform];
+            data = currentData;
           } else if (currentData.global && query.filters?.global) {
             result = currentData[query.platform];
+            data = currentData;
           }
         }
 
-        ctx.body = result;
+        ctx.body = data.ck_editor;
       } catch (err) {
         console.log(err);
         ctx.status = 500;
