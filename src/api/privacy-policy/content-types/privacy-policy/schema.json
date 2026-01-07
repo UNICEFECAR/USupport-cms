@@ -65,6 +65,50 @@
       },
       "type": "boolean",
       "default": false
+    },
+    "test": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "blocks"
+    },
+    "website_ck": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "customField",
+      "options": {
+        "preset": "markdown"
+      },
+      "customField": "plugin::ckeditor5.CKEditor"
+    },
+    "client_ck": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "customField",
+      "options": {
+        "preset": "markdown"
+      },
+      "customField": "plugin::ckeditor5.CKEditor"
+    },
+    "provider_ck": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "customField",
+      "options": {
+        "preset": "markdown"
+      },
+      "customField": "plugin::ckeditor5.CKEditor"
     }
   }
 }
