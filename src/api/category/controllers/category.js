@@ -80,10 +80,14 @@ module.exports = createCoreController(
         const startDate = ctx.query.startDate;
         const endDate = ctx.query.endDate;
 
+        const hasDemographicFilters = sex || yearOfBirthFrom || yearOfBirthTo || urbanRural;
+
         // Check if startDate exists and is before November 5th, 2025
         const shouldAddLegacyViews =
-          !startDate ||
-          (startDate && new Date(startDate) < new Date("2025-11-05"));
+          (!startDate ||
+          (startDate && new Date(startDate) < new Date("2025-11-05"))) && !hasDemographicFilters;
+
+
 
         // Get all categories with their localizations
         const categories = await strapi.db
