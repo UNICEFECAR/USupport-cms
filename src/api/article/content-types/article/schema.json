@@ -163,6 +163,14 @@
           "localized": true
         }
       }
+    },
+    "decision_tree_section": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "integer"
     }
   }
 }
