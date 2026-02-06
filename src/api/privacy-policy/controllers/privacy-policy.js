@@ -22,24 +22,19 @@ module.exports = createCoreController(
           .findMany({ where: { locale: query.locale } });
 
         let result = null;
-        let data = null;
+        const platformKey = query.platform;
+        const platformKeyCK = `${platformKey}_ck`;
+
         for (let i = 0; i < privacyPolicies.length; i++) {
           const currentData = privacyPolicies[i];
           if (currentData.country === query.country) {
-            result = currentData[query.platform];
-          } else if (
-            currentData.is_playandheal &&
-            query.filters?.is_playandheal
-          ) {
-            result = currentData[query.platform];
-            data = currentData;
+            result = currentData[platformKeyCK] || currentData[platformKey];
           } else if (currentData.global && query.filters?.global) {
-            result = currentData[query.platform];
-            data = currentData;
+            result = currentData[platformKeyCK] || currentData[platformKey];
           }
         }
 
-        ctx.body = data.ck_editor;
+        ctx.body = result;
       } catch (err) {
         console.log(err);
         ctx.status = 500;

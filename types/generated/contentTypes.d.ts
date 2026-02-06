@@ -386,6 +386,18 @@ export interface ApiAboutUsPageAboutUsPage extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    content_ck: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'default';
+        }
+      > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     country: Attribute.String &
       Attribute.CustomField<'plugin::country-select.country'> &
       Attribute.SetPluginOptions<{
@@ -520,6 +532,18 @@ export interface ApiArticleArticle extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    body_ck: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'default';
+        }
+      > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     category: Attribute.Relation<
       'api::article.article',
       'manyToOne',
@@ -532,6 +556,12 @@ export interface ApiArticleArticle extends Schema.CollectionType {
       'admin::user'
     > &
       Attribute.Private;
+    decision_tree_section: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
     description: Attribute.Text &
       Attribute.SetPluginOptions<{
         i18n: {
@@ -699,6 +729,18 @@ export interface ApiAssessmentResultAssessmentResult
           localized: true;
         };
       }>;
+    summary_ck: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'default';
+        }
+      > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
       'api::assessment-result.assessment-result',
@@ -808,6 +850,18 @@ export interface ApiCookiePolicyCookiePolicy extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    client_ck: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'default';
+        }
+      > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     country: Attribute.String &
       Attribute.CustomField<'plugin::country-select.country'> &
       Attribute.SetPluginOptions<{
@@ -850,6 +904,18 @@ export interface ApiCookiePolicyCookiePolicy extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    provider_ck: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'default';
+        }
+      > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     publishedAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
@@ -860,6 +926,18 @@ export interface ApiCookiePolicyCookiePolicy extends Schema.CollectionType {
       Attribute.Private;
     website: Attribute.RichText &
       Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    website_ck: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'default';
+        }
+      > &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -1191,7 +1269,7 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Schema.CollectionType {
       Attribute.CustomField<
         'plugin::ckeditor5.CKEditor',
         {
-          preset: 'markdown';
+          preset: 'default';
         }
       > &
       Attribute.SetPluginOptions<{
@@ -1239,7 +1317,7 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Schema.CollectionType {
       Attribute.CustomField<
         'plugin::ckeditor5.CKEditor',
         {
-          preset: 'markdown';
+          preset: 'default';
         }
       > &
       Attribute.SetPluginOptions<{
@@ -1272,7 +1350,7 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Schema.CollectionType {
       Attribute.CustomField<
         'plugin::ckeditor5.CKEditor',
         {
-          preset: 'markdown';
+          preset: 'default';
         }
       > &
       Attribute.SetPluginOptions<{
@@ -1388,6 +1466,18 @@ export interface ApiTermsOfUseTermsOfUse extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    client_ck: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'default';
+        }
+      > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     country: Attribute.String &
       Attribute.CustomField<'plugin::country-select.country'>;
     createdAt: Attribute.DateTime;
@@ -1424,6 +1514,18 @@ export interface ApiTermsOfUseTermsOfUse extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    provider_ck: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'default';
+        }
+      > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     publishedAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
@@ -1434,6 +1536,18 @@ export interface ApiTermsOfUseTermsOfUse extends Schema.CollectionType {
       Attribute.Private;
     website: Attribute.RichText &
       Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    website_ck: Attribute.RichText &
+      Attribute.CustomField<
+        'plugin::ckeditor5.CKEditor',
+        {
+          preset: 'default';
+        }
+      > &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
