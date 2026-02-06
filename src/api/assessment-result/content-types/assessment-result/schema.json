@@ -32,11 +32,7 @@
         }
       },
       "type": "enumeration",
-      "enum": [
-        "low",
-        "moderate",
-        "high"
-      ],
+      "enum": ["low", "moderate", "high"],
       "required": true
     },
     "social": {
@@ -46,11 +42,7 @@
         }
       },
       "type": "enumeration",
-      "enum": [
-        "low",
-        "moderate",
-        "high"
-      ],
+      "enum": ["low", "moderate", "high"],
       "required": true
     },
     "biological": {
@@ -60,11 +52,7 @@
         }
       },
       "type": "enumeration",
-      "enum": [
-        "low",
-        "moderate",
-        "high"
-      ],
+      "enum": ["low", "moderate", "high"],
       "required": true
     },
     "articles": {
@@ -90,7 +78,7 @@
       },
       "type": "customField",
       "options": {
-        "preset": "markdown"
+        "preset": "default"
       },
       "customField": "plugin::ckeditor5.CKEditor"
     }
