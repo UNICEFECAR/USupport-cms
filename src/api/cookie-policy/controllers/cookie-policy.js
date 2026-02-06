@@ -22,13 +22,15 @@ module.exports = createCoreController(
           .findMany({ where: { locale: query.locale } });
 
         let result = null;
-        console.log(query);
+        const platformKey = query.platform;
+        const platformKeyCK = `${platformKey}_ck`;
+
         if (query.country === "global") {
           // Look for cookie policy with global flag set to true
           for (let i = 0; i < cookiePolicy.length; i++) {
             const currentData = cookiePolicy[i];
             if (currentData.global === true) {
-              result = currentData[query.platform];
+              result = currentData[platformKeyCK] || currentData[platformKey];
               break;
             }
           }
@@ -37,7 +39,7 @@ module.exports = createCoreController(
           for (let i = 0; i < cookiePolicy.length; i++) {
             const currentData = cookiePolicy[i];
             if (currentData.is_playandheal === true) {
-              result = currentData[query.platform];
+              result = currentData[platformKeyCK] || currentData[platformKey];
               break;
             }
           }
@@ -46,7 +48,7 @@ module.exports = createCoreController(
           for (let i = 0; i < cookiePolicy.length; i++) {
             const currentData = cookiePolicy[i];
             if (currentData.country === query.country) {
-              result = currentData[query.platform];
+              result = currentData[platformKeyCK] || currentData[platformKey];
               break;
             }
           }
