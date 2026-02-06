@@ -82,7 +82,7 @@
       },
       "type": "customField",
       "options": {
-        "preset": "markdown"
+        "preset": "default"
       },
       "customField": "plugin::ckeditor5.CKEditor"
     },
@@ -94,7 +94,7 @@
       },
       "type": "customField",
       "options": {
-        "preset": "markdown"
+        "preset": "default"
       },
       "customField": "plugin::ckeditor5.CKEditor"
     },
@@ -106,7 +106,7 @@
       },
       "type": "customField",
       "options": {
-        "preset": "markdown"
+        "preset": "default"
       },
       "customField": "plugin::ckeditor5.CKEditor"
     }
