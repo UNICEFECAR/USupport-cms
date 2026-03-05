@@ -1,0 +1,4 @@
+/* CKEditor content area: default font Inter */
+:root {
+  --ck-content-font-family: "Inter", sans-serif;
+}
