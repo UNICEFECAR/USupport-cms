@@ -1,4 +1,5 @@
 import USupport_rect from "./extensions/USupport_rect.svg";
+import "./css/ckeditor-inter.css";
 
 export default {
   config: {
