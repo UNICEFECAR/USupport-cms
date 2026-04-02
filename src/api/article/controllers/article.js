@@ -424,6 +424,8 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
         whereClause.$or = [
           { title: { $containsi: contains } },
           { description: { $containsi: contains } },
+          { body: { $containsi: contains } },
+          { body_ck: { $containsi: contains } },
         ];
       }
 
