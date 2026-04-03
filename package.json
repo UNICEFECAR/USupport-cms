@@ -1,15 +1,19 @@
 {
   "name": "u-support-cms",
-  "private": true,
   "version": "0.1.0",
+  "private": true,
   "description": "USupport CMS",
+  "license": "MIT",
+  "author": {
+    "name": "7Digit Ltd."
+  },
   "scripts": {
-    "develop": "strapi develop",
-    "start": "strapi start",
     "build": "strapi build",
-    "strapi": "strapi",
+    "develop": "strapi develop",
     "lint": "eslint . --ext .js",
-    "lint-fix": "eslint . --ext .js --fix"
+    "lint-fix": "eslint . --ext .js --fix",
+    "start": "strapi start",
+    "strapi": "strapi"
   },
   "dependencies": {
     "@_sh/strapi-plugin-ckeditor": "^3.0.9",
@@ -19,25 +23,24 @@
     "@strapi/provider-upload-aws-s3": "^4.5.1",
     "@strapi/strapi": "4.25.22",
     "node-fetch": "^2.7.0",
-    "pg": "8.6.0",
+    "pg": "^8.20.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^5.3.4",
     "strapi-plugin-country-select": "^1.0.0",
-    "styled-components": "^5.3.11"
+    "styled-components": "^5.3.3"
   },
-  "author": {
-    "name": "7Digit Ltd."
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.22.15"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=20.x.x",
+    "npm": ">=6.0.0"
+  },
+  "overrides": {
+    "fast-xml-parser": "^5.3.6"
   },
   "strapi": {
     "uuid": "b2a84153-e4be-409c-9688-8a84e5f310fc"
-  },
-  "engines": {
-    "node": ">=14.19.1 <=18.x.x",
-    "npm": ">=6.0.0"
-  },
-  "license": "MIT",
-  "devDependencies": {
-    "@babel/eslint-parser": "^7.22.15"
   }
 }
