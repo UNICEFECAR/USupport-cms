@@ -18,7 +18,9 @@ module.exports = createCoreController(
         const { query } = ctx;
         const aboutUsPage = await strapi.db
           .query("api::about-us-page.about-us-page")
-          .findMany({ where: { locale: query.locale } });
+          .findMany({
+            where: { locale: query.locale, publishedAt: { $notNull: true } },
+          });
 
         console.log(query, "query");
 

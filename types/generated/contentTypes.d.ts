@@ -635,6 +635,12 @@ export interface ApiArticleArticle extends Schema.CollectionType {
           localized: true;
         };
       }>;
+    s3_tts_url: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     share_count: Attribute.BigInteger &
       Attribute.SetPluginOptions<{
         i18n: {

@@ -116,7 +116,7 @@ const CKEConfig = () => ({
          * Font family: only Poppins (default is Poppins too)
          */
         fontFamily: {
-          options: ["Inter, sans-serif"],
+          options: ["Inter"],
         },
 
         /**

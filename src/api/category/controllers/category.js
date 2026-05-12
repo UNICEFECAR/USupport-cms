@@ -126,6 +126,7 @@ module.exports = createCoreController(
               views: 0,
               downloads: 0,
               shares: 0,
+              listens: 0,
             });
           }
           const metrics = contentMetrics.get(key);
@@ -139,6 +140,8 @@ module.exports = createCoreController(
             metrics.downloads += 1;
           } else if (engagement.action === "share") {
             metrics.shares += 1;
+          } else if (engagement.action === "listen") {
+            metrics.listens += 1;
           }
         });
 
@@ -168,6 +171,7 @@ module.exports = createCoreController(
                   views: 0,
                   downloads: 0,
                   shares: 0,
+                  listens: 0,
                 };
             if (shouldAddLegacyViews) {
               metrics.views += parseInt(article.read_count || 0);
@@ -179,6 +183,7 @@ module.exports = createCoreController(
               read_count: metrics.views,
               download_count: metrics.downloads,
               share_count: metrics.shares,
+              listen_count: metrics.listens,
             };
           });
         }
@@ -205,6 +210,7 @@ module.exports = createCoreController(
                   views: 0,
                   downloads: 0,
                   shares: 0,
+                  listens: 0,
                 };
             if (shouldAddLegacyViews) {
               metrics.views += parseInt(video.view_count || 0);
@@ -215,6 +221,7 @@ module.exports = createCoreController(
               dislikes: metrics.dislikes,
               view_count: metrics.views,
               share_count: metrics.shares,
+              listen_count: metrics.listens,
             };
           });
         }
@@ -241,6 +248,7 @@ module.exports = createCoreController(
                   views: 0,
                   downloads: 0,
                   shares: 0,
+                  listens: 0,
                 };
             if (shouldAddLegacyViews) {
               metrics.views += parseInt(podcast.view_count || 0);
@@ -251,6 +259,7 @@ module.exports = createCoreController(
               dislikes: metrics.dislikes,
               view_count: metrics.views,
               share_count: metrics.shares,
+              listen_count: metrics.listens,
             };
           });
         }
@@ -449,6 +458,7 @@ module.exports = createCoreController(
               views: 0,
               downloads: 0,
               shares: 0,
+              listens: 0,
               likes: 0,
               dislikes: 0,
             },
@@ -456,6 +466,7 @@ module.exports = createCoreController(
               count: categoryVideos.length,
               views: 0,
               shares: 0,
+              listens: 0,
               likes: 0,
               dislikes: 0,
             },
@@ -463,6 +474,7 @@ module.exports = createCoreController(
               count: categoryPodcasts.length,
               views: 0,
               shares: 0,
+              listens: 0,
               likes: 0,
               dislikes: 0,
             },
@@ -481,6 +493,7 @@ module.exports = createCoreController(
             articles.views += parseInt(article.read_count || 0);
             articles.downloads += parseInt(article.download_count || 0);
             articles.shares += parseInt(article.share_count || 0);
+            articles.listens += parseInt(article.listen_count || 0);
             articles.likes += parseInt(article.likes || 0);
             articles.dislikes += parseInt(article.dislikes || 0);
           });
@@ -489,6 +502,7 @@ module.exports = createCoreController(
           categoryVideos.forEach((video) => {
             videos.views += parseInt(video.view_count || 0);
             videos.shares += parseInt(video.share_count || 0);
+            videos.listens += parseInt(video.listen_count || 0);
             videos.likes += parseInt(video.likes || 0);
             videos.dislikes += parseInt(video.dislikes || 0);
           });
@@ -497,6 +511,7 @@ module.exports = createCoreController(
           categoryPodcasts.forEach((podcast) => {
             podcasts.views += parseInt(podcast.view_count || 0);
             podcasts.shares += parseInt(podcast.share_count || 0);
+            podcasts.listens += parseInt(podcast.listen_count || 0);
             podcasts.likes += parseInt(podcast.likes || 0);
             podcasts.dislikes += parseInt(podcast.dislikes || 0);
           });
@@ -506,6 +521,9 @@ module.exports = createCoreController(
           statistics.shares = articles.shares + videos.shares + podcasts.shares;
 
           statistics.downloads = articles.downloads;
+
+          statistics.listens =
+            articles.listens + videos.listens + podcasts.listens;
 
           statistics.likes = articles.likes + videos.likes + podcasts.likes;
 
