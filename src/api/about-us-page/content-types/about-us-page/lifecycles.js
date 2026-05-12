@@ -54,26 +54,18 @@ module.exports = {
 
   async beforeUpdate(event) {
     const { data, where } = event.params;
-    const { global, country, is_playandheal } = data;
-
-    // If only localizations are being updated or publish/unpublish - skip validation
-    if (
-      (Object.keys(data).length === 2 &&
-        data.localizations &&
-        data.updatedAt) ||
-      (Object.keys(data).length === 3 &&
-        data.updatedAt &&
-        data.updatedBy &&
-        data.hasOwnProperty("publishedAt"))
-    ) {
-      return;
-    }
 
     const currentRecord = await strapi.db
       .query("api::about-us-page.about-us-page")
       .findOne({ where: { id: where.id } });
 
     const locale = currentRecord?.locale;
+    const hasOwn = (field) => Object.prototype.hasOwnProperty.call(data, field);
+    const global = hasOwn("global") ? data.global : currentRecord?.global;
+    const country = hasOwn("country") ? data.country : currentRecord?.country;
+    const is_playandheal = hasOwn("is_playandheal")
+      ? data.is_playandheal
+      : currentRecord?.is_playandheal;
 
     if (!locale) {
       throw new ApplicationError(
