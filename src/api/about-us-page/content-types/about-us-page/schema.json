@@ -18,7 +18,7 @@
   "attributes": {
     "content": {
       "type": "richtext",
-      "required": true,
+      "required": false,
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -62,9 +62,11 @@
       },
       "type": "customField",
       "options": {
-        "preset": "default"
+        "preset": "default",
+        "maxLengthCharacters": 0
       },
-      "customField": "plugin::ckeditor5.CKEditor"
+      "customField": "plugin::ckeditor5.CKEditor",
+      "required": true
     }
   }
 }
