@@ -114,10 +114,13 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
 
       let locales = {};
       locales[result.locale] = result.id;
-      //Checck if the article has any locales
-      if (result.localizations.length > 0) {
+      const linked =
+        Array.isArray(result.localizations) && result.localizations.length > 0
+          ? result.localizations
+          : [];
+      if (linked.length > 0) {
         //Loop through the locales and create an object with the locale code as the key and the id as the value
-        result.localizations.forEach((locale) => {
+        linked.forEach((locale) => {
           locales[locale.locale] = locale.id;
         });
       }
@@ -161,7 +164,17 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
         .service("api::article.article")
         .computeAvailableLocalesForListOfArticleIds(ctx);
 
-      localizedIds = getIdsForSpecificLocales(query.locale, availableLocales);
+      const requestedLocale = query.locale;
+      localizedIds = getIdsForSpecificLocales(requestedLocale, availableLocales);
+
+      // If requested locale has no translation for these articles, resolve via English IDs
+      // and align Strapi locale so the query returns content (pinned / fixed-id flows).
+      if (!localizedIds.length && requestedLocale && requestedLocale !== "en") {
+        localizedIds = getIdsForSpecificLocales("en", availableLocales);
+        if (localizedIds.length) {
+          ctx.query.locale = "en";
+        }
+      }
     }
 
     if (!query.isForAdmin) {
