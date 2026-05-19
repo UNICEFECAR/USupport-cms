@@ -5,7 +5,12 @@
  */
 
 const { createCoreController } = require("@strapi/strapi").factories;
-const { getIdsForSpecificLocales } = require("../../utils/utils.js");
+const {
+  getIdsForSpecificLocales,
+  queryIsForAdmin,
+  mergeAdminCreatedByPopulate,
+  attachCmsAdminCreatorFields,
+} = require("../../utils/utils.js");
 
 module.exports = createCoreController("api::article.article", ({ strapi }) => ({
   // eslint-disable-next-line
@@ -165,7 +170,10 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
         .computeAvailableLocalesForListOfArticleIds(ctx);
 
       const requestedLocale = query.locale;
-      localizedIds = getIdsForSpecificLocales(requestedLocale, availableLocales);
+      localizedIds = getIdsForSpecificLocales(
+        requestedLocale,
+        availableLocales
+      );
 
       // If requested locale has no translation for these articles, resolve via English IDs
       // and align Strapi locale so the query returns content (pinned / fixed-id flows).
@@ -203,10 +211,16 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
       }
     }
 
+    if (queryIsForAdmin(query)) {
+      ctx.query.populate = mergeAdminCreatedByPopulate(ctx.query.populate);
+    }
+
     let { data, meta } = await super.find(ctx);
 
     meta.availableLocales = availableLocales;
     meta.localizedIds = localizedIds;
+
+    await attachCmsAdminCreatorFields(strapi, data, query);
 
     data.forEach((article) => {
       article.attributes.createdBy = {
@@ -247,9 +261,14 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
       ctx.params.id = availableLocales[query.locale];
     }
 
+    if (queryIsForAdmin(query)) {
+      ctx.query.populate = mergeAdminCreatedByPopulate(ctx.query.populate);
+    }
+
     let res = await super.findOne(ctx);
 
     if (res?.data) {
+      await attachCmsAdminCreatorFields(strapi, [res.data], query);
       res.data.attributes.createdBy = {
         data: {
           attributes: {
