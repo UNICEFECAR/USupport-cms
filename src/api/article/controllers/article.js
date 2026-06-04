@@ -352,30 +352,20 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
           return;
         }
 
-        targetArticleIds = [...articleIdsArray]; // default to English IDs
+        // IDs are country CMS ids in any locale — resolve to the requested locale
+        targetArticleIds = await strapi
+          .service("api::article.article")
+          .resolveArticleIdsForLocale(articleIdsArray, locale);
 
-        // If locale != 'en', resolve localized versions
-        if (locale !== "en") {
-          const localizedArticles = await strapi.db
-            .query("api::article.article")
-            .findMany({
-              where: {
-                locale,
-                localizations: {
-                  id: { $in: articleIdsArray },
-                },
-                publishedAt: { $notNull: true },
-              },
-              select: ["id"],
-            });
+        console.log("[getArticleCategoryIds] resolved targetArticleIds:", {
+          count: targetArticleIds.length,
+          includes350: targetArticleIds.includes(350),
+          sample: targetArticleIds.slice(0, 20),
+        });
 
-          targetArticleIds = localizedArticles.map((a) => a.id);
-
-          // If no localized articles found for the provided IDs, return empty array
-          if (targetArticleIds.length === 0) {
-            ctx.body = [];
-            return;
-          }
+        if (targetArticleIds.length === 0) {
+          ctx.body = [];
+          return;
         }
       }
 
@@ -391,16 +381,42 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
       }
 
       if (ageGroupId) {
-        whereClause.age_groups = { id: ageGroupId };
+        const parsedAgeGroupId = parseInt(ageGroupId, 10);
+        const ageGroupIds = [parsedAgeGroupId];
+
+        const ageGroup = await strapi.db
+          .query("api::age-group.age-group")
+          .findOne({
+            where: { id: parsedAgeGroupId },
+            populate: { localizations: true },
+          });
+
+        if (ageGroup) {
+          if (ageGroup.locale === locale) {
+            ageGroupIds[0] = ageGroup.id;
+          } else {
+            const localizedAgeGroup = (ageGroup.localizations || []).find(
+              (entry) => entry.locale === locale
+            );
+            if (localizedAgeGroup) {
+              ageGroupIds[0] = localizedAgeGroup.id;
+            }
+          }
+        }
+
+        whereClause.age_groups = { id: { $in: ageGroupIds } };
       }
 
       // Fetch articles with categories
       const articles = await strapi.db.query("api::article.article").findMany({
         where: whereClause,
-        select: [],
+        select: ["id", "locale", "publishedAt"],
         populate: {
           category: {
             select: ["id"],
+          },
+          age_groups: {
+            select: ["id", "locale"],
           },
         },
       });
@@ -416,7 +432,7 @@ module.exports = createCoreController("api::article.article", ({ strapi }) => ({
 
       ctx.body = categoryIds;
     } catch (err) {
-      console.error(err);
+      console.error("[getArticleCategoryIds] error:", err);
       ctx.status = 500;
       ctx.body = { error: err.message };
     }
