@@ -23,19 +23,58 @@ module.exports = createCoreService("api::article.article", ({ strapi }) => ({
       populate: true, // Only populate what's necessary
     });
 
-    // Construct the result object
-    const result = articles.reduce((acc, article) => {
-      // Initialize the article's entry in the result object
-      acc[article.id] = { [article.locale]: article.id };
+    // Construct the result object, keyed by every id in the localization family
+    const result = {};
 
-      // Map localizations to their respective locales
-      article.localizations.forEach((localization) => {
-        acc[article.id][localization.locale] = localization.id;
+    articles.forEach((article) => {
+      const localeMap = { [article.locale]: article.id };
+
+      (article.localizations || []).forEach((localization) => {
+        localeMap[localization.locale] = localization.id;
       });
 
-      return acc;
-    }, {});
+      Object.values(localeMap).forEach((id) => {
+        result[id] = { ...localeMap };
+      });
+    });
 
     return result;
+  },
+
+  /**
+   * Resolve a list of article IDs (any locale) to IDs in the target locale.
+   */
+  async resolveArticleIdsForLocale(articleIds, locale) {
+    const numericIds = articleIds
+      .map((id) => parseInt(id, 10))
+      .filter((id) => !isNaN(id));
+
+    if (!numericIds.length) {
+      console.log("[resolveArticleIdsForLocale] no valid numeric ids");
+      return [];
+    }
+
+    const articles = await strapi.db.query("api::article.article").findMany({
+      where: { id: { $in: numericIds } },
+      populate: { localizations: true },
+    });
+
+    const resolved = new Set();
+
+    articles.forEach((article) => {
+      if (article.locale === locale) {
+        resolved.add(article.id);
+      }
+
+      (article.localizations || []).forEach((localization) => {
+        if (localization.locale === locale) {
+          resolved.add(localization.id);
+        }
+      });
+    });
+
+    const resolvedIds = [...resolved];
+
+    return resolvedIds;
   },
 }));
