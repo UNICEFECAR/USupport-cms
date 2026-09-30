@@ -380,16 +380,17 @@ export interface ApiAboutUsPageAboutUsPage extends Schema.CollectionType {
   };
   attributes: {
     content: Attribute.RichText &
-      Attribute.Required &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
         };
       }>;
     content_ck: Attribute.RichText &
+      Attribute.Required &
       Attribute.CustomField<
         'plugin::ckeditor5.CKEditor',
         {
+          maxLengthCharacters: 0;
           preset: 'default';
         }
       > &

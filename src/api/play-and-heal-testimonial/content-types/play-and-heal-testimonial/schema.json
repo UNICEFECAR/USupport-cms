@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "play_and_heal_testimonials",
+  "info": {
+    "singularName": "play-and-heal-testimonial",
+    "pluralName": "play-and-heal-testimonials",
+    "displayName": "PlayAndHealTestimonial",
+    "description": "Approved facilitator stories shown in the \"Shaped by experience\" section of the Play and Heal homepage"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "quote": {
+      "type": "text",
+      "required": true,
+      "maxLength": 600,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "author": {
+      "type": "string",
+      "required": true,
+      "maxLength": 150,
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      }
+    }
+  }
+}
