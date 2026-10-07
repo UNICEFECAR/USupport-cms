@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_worksheet_choices",
+  "info": {
+    "displayName": "Choice",
+    "icon": "check",
+    "description": "Single choice, or a checklist when multiple is enabled"
+  },
+  "options": {},
+  "attributes": {
+    "prompt": {
+      "type": "text",
+      "required": true
+    },
+    "multiple": {
+      "type": "boolean",
+      "default": false
+    },
+    "options": {
+      "type": "component",
+      "repeatable": true,
+      "component": "worksheet.option"
+    }
+  }
+}

@@ -421,19 +421,20 @@ export interface ApiAboutUsPageAboutUsPage extends Schema.CollectionType {
         };
       }> &
       Attribute.DefaultTo<false>;
-    is_playandheal: Attribute.Boolean &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }> &
-      Attribute.DefaultTo<false>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
       'api::about-us-page.about-us-page',
       'oneToMany',
       'api::about-us-page.about-us-page'
     >;
+    program: Attribute.Enumeration<['usupport', 'playandheal', 'hosnelhal']> &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.DefaultTo<'usupport'>;
     publishedAt: Attribute.DateTime;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<
@@ -891,19 +892,20 @@ export interface ApiCookiePolicyCookiePolicy extends Schema.CollectionType {
         };
       }> &
       Attribute.DefaultTo<false>;
-    is_playandheal: Attribute.Boolean &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }> &
-      Attribute.DefaultTo<false>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
       'api::cookie-policy.cookie-policy',
       'oneToMany',
       'api::cookie-policy.cookie-policy'
     >;
+    program: Attribute.Enumeration<['usupport', 'playandheal', 'hosnelhal']> &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.DefaultTo<'usupport'>;
     provider: Attribute.RichText &
       Attribute.Required &
       Attribute.SetPluginOptions<{
@@ -1004,6 +1006,415 @@ export interface ApiFaqFaq extends Schema.CollectionType {
       }>;
     updatedAt: Attribute.DateTime;
     updatedBy: Attribute.Relation<'api::faq.faq', 'oneToOne', 'admin::user'> &
+      Attribute.Private;
+  };
+}
+
+export interface ApiHosnAssetHosnAsset extends Schema.CollectionType {
+  collectionName: 'hosn_assets';
+  info: {
+    description: 'Videos, audios, visuals and worksheets';
+    displayName: 'Hosn El Hal - Assets';
+    pluralName: 'hosn-assets';
+    singularName: 'hosn-asset';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    audio_file: Attribute.Media<'audios'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    bundles: Attribute.Relation<
+      'api::hosn-asset.hosn-asset',
+      'manyToMany',
+      'api::hosn-bundle.hosn-bundle'
+    >;
+    cover_image: Attribute.Media<'images'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::hosn-asset.hosn-asset',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    description: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    download_count: Attribute.BigInteger &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    duration_minutes: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.SetMinMax<
+        {
+          min: 0;
+        },
+        number
+      >;
+    file_mobile: Attribute.Media<'images' | 'files'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    file_print: Attribute.Media<'images' | 'files'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    file_web: Attribute.Media<'images' | 'files'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    format: Attribute.Enumeration<['video', 'audio', 'visual', 'worksheet']> &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    how_to_use: Attribute.Component<'shared.usage-tip', true> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    interactive_content: Attribute.DynamicZone<
+      [
+        'worksheet.instruction',
+        'worksheet.text-input',
+        'worksheet.scale',
+        'worksheet.choice',
+        'worksheet.table'
+      ]
+    > &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::hosn-asset.hosn-asset',
+      'oneToMany',
+      'api::hosn-asset.hosn-asset'
+    >;
+    page_count: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.SetMinMax<
+        {
+          min: 1;
+        },
+        number
+      >;
+    pillar: Attribute.Relation<
+      'api::hosn-asset.hosn-asset',
+      'manyToOne',
+      'api::hosn-pillar.hosn-pillar'
+    >;
+    publishedAt: Attribute.DateTime;
+    tags: Attribute.Relation<
+      'api::hosn-asset.hosn-asset',
+      'manyToMany',
+      'api::hosn-tag.hosn-tag'
+    >;
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::hosn-asset.hosn-asset',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    video: Attribute.Component<'shared.processed-video'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    view_count: Attribute.BigInteger &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+  };
+}
+
+export interface ApiHosnBundleHosnBundle extends Schema.CollectionType {
+  collectionName: 'hosn_bundles';
+  info: {
+    description: 'Audio packages and teacher bundles';
+    displayName: 'Hosn El Hal - Bundles';
+    pluralName: 'hosn-bundles';
+    singularName: 'hosn-bundle';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    assets: Attribute.Relation<
+      'api::hosn-bundle.hosn-bundle',
+      'manyToMany',
+      'api::hosn-asset.hosn-asset'
+    >;
+    cover_image: Attribute.Media<'images'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::hosn-bundle.hosn-bundle',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    description: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::hosn-bundle.hosn-bundle',
+      'oneToMany',
+      'api::hosn-bundle.hosn-bundle'
+    >;
+    order: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<0>;
+    publishedAt: Attribute.DateTime;
+    tags: Attribute.Relation<
+      'api::hosn-bundle.hosn-bundle',
+      'manyToMany',
+      'api::hosn-tag.hosn-tag'
+    >;
+    title: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    type: Attribute.Enumeration<['audio_package', 'teacher_bundle']> &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::hosn-bundle.hosn-bundle',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiHosnPillarHosnPillar extends Schema.CollectionType {
+  collectionName: 'hosn_pillars';
+  info: {
+    description: 'The thematic pillars assets belong to';
+    displayName: 'Hosn El Hal - Pillars';
+    pluralName: 'hosn-pillars';
+    singularName: 'hosn-pillar';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    assets: Attribute.Relation<
+      'api::hosn-pillar.hosn-pillar',
+      'oneToMany',
+      'api::hosn-asset.hosn-asset'
+    >;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::hosn-pillar.hosn-pillar',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    description: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    icon: Attribute.Media<'images'> &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    key: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::hosn-pillar.hosn-pillar',
+      'oneToMany',
+      'api::hosn-pillar.hosn-pillar'
+    >;
+    name: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    order: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<0>;
+    publishedAt: Attribute.DateTime;
+    tagline: Attribute.String &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::hosn-pillar.hosn-pillar',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+  };
+}
+
+export interface ApiHosnTagHosnTag extends Schema.CollectionType {
+  collectionName: 'hosn_tags';
+  info: {
+    description: 'Topic, need and mood tags used for filters and recommendations';
+    displayName: 'Hosn El Hal - Tags';
+    pluralName: 'hosn-tags';
+    singularName: 'hosn-tag';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    assets: Attribute.Relation<
+      'api::hosn-tag.hosn-tag',
+      'manyToMany',
+      'api::hosn-asset.hosn-asset'
+    >;
+    bundles: Attribute.Relation<
+      'api::hosn-tag.hosn-tag',
+      'manyToMany',
+      'api::hosn-bundle.hosn-bundle'
+    >;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::hosn-tag.hosn-tag',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    key: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::hosn-tag.hosn-tag',
+      'oneToMany',
+      'api::hosn-tag.hosn-tag'
+    >;
+    name: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    publishedAt: Attribute.DateTime;
+    type: Attribute.Enumeration<['topic', 'need', 'mood']> &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::hosn-tag.hosn-tag',
+      'oneToOne',
+      'admin::user'
+    > &
       Attribute.Private;
   };
 }
@@ -1133,6 +1544,75 @@ export interface ApiMoodTrackerRecomendationMoodTrackerRecomendation
       'oneToMany',
       'api::video.video'
     >;
+  };
+}
+
+export interface ApiPlayAndHealTestimonialPlayAndHealTestimonial
+  extends Schema.CollectionType {
+  collectionName: 'play_and_heal_testimonials';
+  info: {
+    description: 'Approved facilitator stories shown in the "Shaped by experience" section of the Play and Heal homepage';
+    displayName: 'PlayAndHealTestimonial';
+    pluralName: 'play-and-heal-testimonials';
+    singularName: 'play-and-heal-testimonial';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  pluginOptions: {
+    i18n: {
+      localized: true;
+    };
+  };
+  attributes: {
+    author: Attribute.String &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.SetMinMaxLength<{
+        maxLength: 150;
+      }>;
+    createdAt: Attribute.DateTime;
+    createdBy: Attribute.Relation<
+      'api::play-and-heal-testimonial.play-and-heal-testimonial',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
+    locale: Attribute.String;
+    localizations: Attribute.Relation<
+      'api::play-and-heal-testimonial.play-and-heal-testimonial',
+      'oneToMany',
+      'api::play-and-heal-testimonial.play-and-heal-testimonial'
+    >;
+    order: Attribute.Integer &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: false;
+        };
+      }> &
+      Attribute.DefaultTo<0>;
+    publishedAt: Attribute.DateTime;
+    quote: Attribute.Text &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.SetMinMaxLength<{
+        maxLength: 600;
+      }>;
+    updatedAt: Attribute.DateTime;
+    updatedBy: Attribute.Relation<
+      'api::play-and-heal-testimonial.play-and-heal-testimonial',
+      'oneToOne',
+      'admin::user'
+    > &
+      Attribute.Private;
   };
 }
 
@@ -1300,19 +1780,20 @@ export interface ApiPrivacyPolicyPrivacyPolicy extends Schema.CollectionType {
         };
       }> &
       Attribute.DefaultTo<false>;
-    is_playandheal: Attribute.Boolean &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }> &
-      Attribute.DefaultTo<false>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
       'api::privacy-policy.privacy-policy',
       'oneToMany',
       'api::privacy-policy.privacy-policy'
     >;
+    program: Attribute.Enumeration<['usupport', 'playandheal', 'hosnelhal']> &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.DefaultTo<'usupport'>;
     provider: Attribute.RichText &
       Attribute.Required &
       Attribute.SetPluginOptions<{
@@ -1501,19 +1982,20 @@ export interface ApiTermsOfUseTermsOfUse extends Schema.CollectionType {
         };
       }> &
       Attribute.DefaultTo<false>;
-    is_playandheal: Attribute.Boolean &
-      Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }> &
-      Attribute.DefaultTo<false>;
     locale: Attribute.String;
     localizations: Attribute.Relation<
       'api::terms-of-use.terms-of-use',
       'oneToMany',
       'api::terms-of-use.terms-of-use'
     >;
+    program: Attribute.Enumeration<['usupport', 'playandheal', 'hosnelhal']> &
+      Attribute.Required &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }> &
+      Attribute.DefaultTo<'usupport'>;
     provider: Attribute.RichText &
       Attribute.Required &
       Attribute.SetPluginOptions<{
@@ -2135,8 +2617,13 @@ declare module '@strapi/types' {
       'api::category.category': ApiCategoryCategory;
       'api::cookie-policy.cookie-policy': ApiCookiePolicyCookiePolicy;
       'api::faq.faq': ApiFaqFaq;
+      'api::hosn-asset.hosn-asset': ApiHosnAssetHosnAsset;
+      'api::hosn-bundle.hosn-bundle': ApiHosnBundleHosnBundle;
+      'api::hosn-pillar.hosn-pillar': ApiHosnPillarHosnPillar;
+      'api::hosn-tag.hosn-tag': ApiHosnTagHosnTag;
       'api::label.label': ApiLabelLabel;
       'api::mood-tracker-recomendation.mood-tracker-recomendation': ApiMoodTrackerRecomendationMoodTrackerRecomendation;
+      'api::play-and-heal-testimonial.play-and-heal-testimonial': ApiPlayAndHealTestimonialPlayAndHealTestimonial;
       'api::podcast.podcast': ApiPodcastPodcast;
       'api::privacy-policy.privacy-policy': ApiPrivacyPolicyPrivacyPolicy;
       'api::sos-center.sos-center': ApiSosCenterSosCenter;

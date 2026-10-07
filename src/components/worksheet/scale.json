@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_worksheet_scales",
+  "info": {
+    "displayName": "Scale",
+    "icon": "chartBubble",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "prompt": {
+      "type": "text",
+      "required": true
+    },
+    "min": {
+      "type": "integer",
+      "default": 1,
+      "required": true
+    },
+    "max": {
+      "type": "integer",
+      "default": 5,
+      "required": true
+    },
+    "min_label": {
+      "type": "string"
+    },
+    "max_label": {
+      "type": "string"
+    }
+  }
+}
