@@ -55,7 +55,7 @@ module.exports = [
       jsonLimit: "256mb", // modify here limit of the JSON body
       textLimit: "256mb", // modify here limit of the text body
       formidable: {
-        maxFileSize: 1024 * 1024 * 1024, // multipart data, 1GB for source videos (see src/api/utils/video-processing)
+        maxFileSize: 1024 * 1024 * 1024, // multipart data, 1GB for source media (see src/api/utils/media-processing)
       },
     },
   },
