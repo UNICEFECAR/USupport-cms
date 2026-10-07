@@ -7,7 +7,7 @@ EXPOSE 1337
 
 WORKDIR /opt/app
 
-# ffmpeg converts uploaded videos to HLS (src/api/utils/video-processing)
+# ffmpeg converts uploaded video and audio (src/api/utils/media-processing)
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ffmpeg \
   && rm -rf /var/lib/apt/lists/*

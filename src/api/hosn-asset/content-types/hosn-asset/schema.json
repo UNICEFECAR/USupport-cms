@@ -5,7 +5,7 @@
     "singularName": "hosn-asset",
     "pluralName": "hosn-assets",
     "displayName": "Hosn El Hal - Assets",
-    "description": "Videos, audios, visuals and worksheets"
+    "description": "Videos, audios, thumbnails (visual messages) and worksheets"
   },
   "options": {
     "draftAndPublish": true
@@ -43,7 +43,7 @@
       "enum": [
         "video",
         "audio",
-        "visual",
+        "thumbnail",
         "worksheet"
       ],
       "required": true
@@ -111,18 +111,15 @@
       "repeatable": false,
       "component": "shared.processed-video"
     },
-    "audio_file": {
+    "audio": {
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
       },
-      "type": "media",
-      "multiple": false,
-      "required": false,
-      "allowedTypes": [
-        "audios"
-      ]
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.processed-audio"
     },
     "file_web": {
       "pluginOptions": {
