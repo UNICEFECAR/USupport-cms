@@ -217,16 +217,30 @@ async function registerMediaProcessing() {
   });
 
   for (const componentUid of componentUids) {
+    const { label, backfillWhere } = PROCESSORS[componentUid];
     const components = await strapi.db.query(componentUid).findMany({
       select: ["id"],
       where: { status: { $in: [STATUS.PENDING, STATUS.PROCESSING] } },
     });
     if (components.length) {
-      strapi.log.info(
-        `Resuming processing of ${components.length} ${PROCESSORS[componentUid].label} file(s)`
-      );
+      strapi.log.info(`Resuming processing of ${components.length} ${label} file(s)`);
     }
     components.forEach(({ id }) => enqueue(componentUid, id));
+
+    // Files processed before the processor produced everything it does now
+    if (backfillWhere) {
+      const outdated = await strapi.db.query(componentUid).findMany({
+        select: ["id"],
+        where: { ...backfillWhere, source: { id: { $notNull: true } } },
+      });
+      if (outdated.length) {
+        strapi.log.info(`Processing ${outdated.length} ${label} file(s) again for new outputs`);
+      }
+      for (const { id } of outdated) {
+        await updateComponent(componentUid, id, { status: STATUS.PENDING });
+        enqueue(componentUid, id);
+      }
+    }
   }
 }
 

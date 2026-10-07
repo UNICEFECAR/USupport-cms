@@ -109,10 +109,13 @@ async function probe(inputPath) {
 
 /**
  * @param {number} sourceHeight
+ * @param {number[]} [heights] - only these renditions, e.g. [360, 720]
  * @returns {object[]} renditions not taller than the source (at least one)
  */
-function selectRenditions(sourceHeight) {
-  const renditions = RENDITIONS.filter((r) => r.height <= sourceHeight);
+function selectRenditions(sourceHeight, heights) {
+  const renditions = RENDITIONS.filter(
+    (r) => r.height <= sourceHeight && (!heights || heights.includes(r.height))
+  );
   return renditions.length ? renditions : [RENDITIONS[0]];
 }
 
@@ -140,10 +143,11 @@ const audioCodecArgs = (rendition, index) => {
  *
  * @param {string} inputPath
  * @param {{height: number, hasAudio: boolean}} info - result of probe()
+ * @param {number[]} [heights] - limit the ladder, e.g. [360, 720]
  * @returns {string[]}
  */
-function buildHlsArgs(inputPath, { height, hasAudio }) {
-  const renditions = selectRenditions(height);
+function buildHlsArgs(inputPath, { height, hasAudio }, heights) {
+  const renditions = selectRenditions(height, heights);
 
   const splitOutputs = renditions.map((_, i) => `[v${i}]`).join("");
   const scales = renditions.map(
