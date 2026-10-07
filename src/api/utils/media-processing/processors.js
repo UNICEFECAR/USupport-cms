@@ -13,6 +13,9 @@ const {
 } = require("./ffmpeg");
 const { uploadFile, uploadDirectory } = require("./storage");
 
+// Video renditions for audio uploads that come with a picture
+const AUDIO_VIDEO_HEIGHTS = [360, 720];
+
 // Fields written by the pipeline, never by editors (see index.js)
 const COMMON_GENERATED_FIELDS = [
   "status",
@@ -51,18 +54,36 @@ const PROCESSORS = {
   "shared.processed-audio": {
     label: "audio",
     storageFolder: "processed-audios",
-    generatedFields: ["audio_url", ...COMMON_GENERATED_FIELDS],
+    generatedFields: ["audio_url", "video_hls_url", "has_video", ...COMMON_GENERATED_FIELDS],
+    // Audios processed before the video version existed are processed again once
+    backfillWhere: { status: "ready", has_video: { $null: true } },
 
     /**
-     * Small AAC file from any audio or video upload, streamed and downloaded
+     * Small AAC file from any audio or video upload, streamed and downloaded.
+     * When the upload has a picture (e.g. an .mp4 with a title card) it also
+     * gets a light HLS video, so the page can play it with its visuals.
      */
     async run({ inputPath, info, workDir, storagePath }) {
       if (!info.hasAudio) throw new Error("The uploaded file has no audio stream.");
 
       const audioPath = path.join(workDir, "audio.m4a");
       await runFfmpeg(buildAudioArgs(inputPath, audioPath), workDir);
+      const result = {
+        audio_url: await uploadFile(audioPath, storagePath),
+        has_video: info.hasVideo,
+        video_hls_url: null,
+      };
 
-      return { audio_url: await uploadFile(audioPath, storagePath) };
+      if (info.hasVideo) {
+        // Mostly still images - two renditions are plenty
+        const hlsDir = path.join(workDir, "hls");
+        await fs.promises.mkdir(hlsDir);
+        await runFfmpeg(buildHlsArgs(inputPath, info, AUDIO_VIDEO_HEIGHTS), hlsDir);
+        const hlsUrls = await uploadDirectory(hlsDir, storagePath);
+        result.video_hls_url = hlsUrls[HLS_MASTER_PLAYLIST];
+      }
+
+      return result;
     },
   },
 };
