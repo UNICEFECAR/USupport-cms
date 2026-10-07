@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_worksheet_text_inputs",
+  "info": {
+    "displayName": "Text input",
+    "icon": "pencil",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "prompt": {
+      "type": "text",
+      "required": true
+    },
+    "placeholder": {
+      "type": "string"
+    },
+    "multiline": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

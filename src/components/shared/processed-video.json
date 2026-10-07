@@ -1,0 +1,44 @@
+{
+  "collectionName": "components_shared_processed_videos",
+  "info": {
+    "displayName": "Processed video",
+    "icon": "play",
+    "description": "Upload a source video and it's converted to HLS automatically, or paste an HLS url"
+  },
+  "options": {},
+  "attributes": {
+    "source": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "videos"
+      ]
+    },
+    "hls_url": {
+      "type": "string"
+    },
+    "download_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed"
+      ]
+    },
+    "error": {
+      "type": "text"
+    },
+    "duration_seconds": {
+      "type": "integer"
+    },
+    "processed_source_id": {
+      "type": "integer",
+      "private": true
+    }
+  }
+}

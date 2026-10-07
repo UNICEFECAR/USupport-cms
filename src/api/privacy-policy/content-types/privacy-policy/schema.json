@@ -57,14 +57,20 @@
       "default": false,
       "required": false
     },
-    "is_playandheal": {
+    "program": {
       "pluginOptions": {
         "i18n": {
           "localized": true
         }
       },
-      "type": "boolean",
-      "default": false
+      "type": "enumeration",
+      "enum": [
+        "usupport",
+        "playandheal",
+        "hosnelhal"
+      ],
+      "default": "usupport",
+      "required": true
     },
     "test": {
       "pluginOptions": {

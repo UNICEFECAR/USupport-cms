@@ -5,46 +5,17 @@
  */
 
 const { createCoreController } = require("@strapi/strapi").factories;
+const { createProgramScopedFind } = require("../../utils/program-scoped");
 
-module.exports = createCoreController(
-  "api::about-us-page.about-us-page",
-  ({ strapi }) => ({
-    async customFind(ctx) {
-      /**
-       * #route   GET /about-us-pages/find
-       * #desc    Get about us page
-       */
-      try {
-        const { query } = ctx;
-        const aboutUsPage = await strapi.db
-          .query("api::about-us-page.about-us-page")
-          .findMany({
-            where: { locale: query.locale, publishedAt: { $notNull: true } },
-          });
+const UID = "api::about-us-page.about-us-page";
 
-        console.log(query, "query");
-
-        let result = null;
-        for (let i = 0; i < aboutUsPage.length; i++) {
-          const currentData = aboutUsPage[i];
-          console.log(currentData.is_playandheal, "currentData");
-          if (currentData.country === query.country) {
-            result = currentData;
-          } else if (currentData.global && query.filters?.global) {
-            result = currentData;
-          } else if (
-            currentData.is_playandheal &&
-            query.filters?.is_playandheal
-          ) {
-            result = currentData;
-          }
-        }
-
-        ctx.body = result;
-      } catch (err) {
-        ctx.status = 500;
-        ctx.body = { error: err.message };
-      }
-    },
-  })
-);
+module.exports = createCoreController(UID, () => ({
+  /**
+   * #route   GET /about-us-pages/find
+   * #desc    Get the published about us page for a program, country or global
+   */
+  customFind: createProgramScopedFind(UID, {
+    returnEntry: true,
+    publishedOnly: true,
+  }),
+}));
