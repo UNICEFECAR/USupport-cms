@@ -1,0 +1,84 @@
+{
+  "kind": "collectionType",
+  "collectionName": "hosn_bundles",
+  "info": {
+    "singularName": "hosn-bundle",
+    "pluralName": "hosn-bundles",
+    "displayName": "Hosn El Hal - Bundles",
+    "description": "Audio packages and teacher bundles"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "text"
+    },
+    "type": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "enumeration",
+      "enum": [
+        "audio_package",
+        "teacher_bundle"
+      ],
+      "required": true
+    },
+    "cover_image": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "assets": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::hosn-asset.hosn-asset",
+      "inversedBy": "bundles"
+    },
+    "tags": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::hosn-tag.hosn-tag",
+      "inversedBy": "bundles"
+    },
+    "order": {
+      "pluginOptions": {
+        "i18n": {
+          "localized": false
+        }
+      },
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

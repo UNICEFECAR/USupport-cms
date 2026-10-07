@@ -1,5 +1,7 @@
 "use strict";
 
+const { resumeVideoProcessing } = require("./api/utils/video-processing");
+
 module.exports = {
   /**
    * An asynchronous register function that runs before
@@ -16,5 +18,8 @@ module.exports = {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  bootstrap(/*{ strapi }*/) {},
+  async bootstrap(/*{ strapi }*/) {
+    // Pick up videos interrupted by a restart or deploy
+    await resumeVideoProcessing();
+  },
 };

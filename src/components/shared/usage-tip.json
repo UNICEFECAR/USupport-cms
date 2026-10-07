@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_shared_usage_tips",
+  "info": {
+    "displayName": "Usage tip",
+    "icon": "lightbulb",
+    "description": "How to use the content in a given setting"
+  },
+  "options": {},
+  "attributes": {
+    "setting": {
+      "type": "enumeration",
+      "enum": [
+        "alone",
+        "small_group",
+        "school_team"
+      ],
+      "required": true
+    },
+    "text": {
+      "type": "customField",
+      "options": {
+        "preset": "default"
+      },
+      "customField": "plugin::ckeditor5.CKEditor",
+      "required": true
+    }
+  }
+}

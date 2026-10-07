@@ -1,3 +1,7 @@
+# Stop on the first failing command, e.g. a failed docker build must not
+# restart the deployment with the previous image
+set -e
+
 ENV=$1
 REDEPLOY=$2
 

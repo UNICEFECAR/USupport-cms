@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_worksheet_instructions",
+  "info": {
+    "displayName": "Instruction",
+    "icon": "information",
+    "description": ""
+  },
+  "options": {},
+  "attributes": {
+    "body": {
+      "type": "customField",
+      "options": {
+        "preset": "default"
+      },
+      "customField": "plugin::ckeditor5.CKEditor",
+      "required": true
+    }
+  }
+}
