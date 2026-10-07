@@ -1,6 +1,6 @@
 "use strict";
 
-const { resumeVideoProcessing } = require("./api/utils/video-processing");
+const { registerMediaProcessing } = require("./api/utils/media-processing");
 
 module.exports = {
   /**
@@ -19,7 +19,7 @@ module.exports = {
    * run jobs, or perform some special logic.
    */
   async bootstrap(/*{ strapi }*/) {
-    // Pick up videos interrupted by a restart or deploy
-    await resumeVideoProcessing();
+    // Protect generated media fields and pick up files interrupted by a restart
+    await registerMediaProcessing();
   },
 };

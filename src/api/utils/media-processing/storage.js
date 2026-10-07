@@ -12,6 +12,7 @@ const MIME_TYPES = {
   ".m3u8": "application/vnd.apple.mpegurl",
   ".ts": "video/mp2t",
   ".mp4": "video/mp4",
+  ".m4a": "audio/mp4",
 };
 
 const UPLOAD_CONCURRENCY = 8;
@@ -30,7 +31,7 @@ async function downloadFile(url, destination) {
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Downloading the source video failed with status ${response.status}.`);
+    throw new Error(`Downloading the source file failed with status ${response.status}.`);
   }
   await pipeline(response.body, fs.createWriteStream(destination));
 }

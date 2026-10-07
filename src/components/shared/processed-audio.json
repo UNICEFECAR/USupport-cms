@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_shared_processed_audios",
+  "info": {
+    "displayName": "Processed audio",
+    "icon": "headphone",
+    "description": "Upload any audio or video file, it's converted to a small audio file automatically"
+  },
+  "options": {},
+  "attributes": {
+    "source": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "audios",
+        "videos"
+      ]
+    },
+    "audio_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "pending",
+        "processing",
+        "ready",
+        "failed"
+      ]
+    },
+    "error": {
+      "type": "text"
+    },
+    "duration_seconds": {
+      "type": "integer"
+    },
+    "processed_source_id": {
+      "type": "integer",
+      "private": true
+    }
+  }
+}

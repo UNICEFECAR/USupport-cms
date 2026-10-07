@@ -4,8 +4,8 @@ const {
   validateOnPublish,
 } = require("../../../utils/content-actions");
 const {
-  createVideoProcessingLifecycles,
-} = require("../../../utils/video-processing");
+  createMediaProcessingLifecycles,
+} = require("../../../utils/media-processing");
 
 const UID = "api::hosn-asset.hosn-asset";
 
@@ -16,12 +16,12 @@ const REQUIRED_CONTENT = {
     label: "a processed video (upload a source video and wait until its status is ready, or paste an HLS url)",
   },
   audio: {
-    isValid: (asset) => Boolean(asset.audio_file),
-    label: "an audio file",
+    isValid: (asset) => Boolean(asset.audio?.audio_url),
+    label: "a processed audio file (upload an audio or video file and wait until its status is ready)",
   },
-  visual: {
-    isValid: (asset) => Boolean(asset.file_web),
-    label: "a web image",
+  thumbnail: {
+    isValid: (asset) => Boolean(asset.file_web || asset.file_print),
+    label: "an image or PDF",
   },
   worksheet: {
     isValid: (asset) =>
@@ -33,7 +33,7 @@ const REQUIRED_CONTENT = {
 };
 
 module.exports = {
-  ...createVideoProcessingLifecycles(UID, "video"),
+  ...createMediaProcessingLifecycles(UID, ["video", "audio"]),
 
   async beforeCreate(event) {
     await validateEnglishLocaleFirst(event, UID);
@@ -44,7 +44,7 @@ module.exports = {
     await validateOnPublish(
       event,
       UID,
-      ["video", "audio_file", "file_web", "file_print", "interactive_content"],
+      ["video", "audio", "file_web", "file_print", "interactive_content"],
       (asset) => {
         const required = REQUIRED_CONTENT[asset.format];
         if (!required || required.isValid(asset)) return null;

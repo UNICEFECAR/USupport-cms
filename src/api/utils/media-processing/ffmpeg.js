@@ -1,11 +1,17 @@
 /**
- * ffmpeg / ffprobe helpers used to turn an uploaded video into an adaptive
- * HLS stream plus a small MP4 for downloads.
+ * ffmpeg / ffprobe helpers: uploaded videos become an adaptive HLS stream plus
+ * a small MP4 for downloads, uploaded audio (any audio or video file) becomes
+ * a small AAC file.
  */
 const { spawn } = require("child_process");
 
 // Limit ffmpeg so transcoding doesn't starve the CMS process
-const THREADS = String(process.env.VIDEO_PROCESSING_THREADS || 2);
+const THREADS = String(
+  process.env.MEDIA_PROCESSING_THREADS || process.env.VIDEO_PROCESSING_THREADS || 2
+);
+
+// Speech and calm music stay clear at 96 kbps AAC, about 0.7 MB per minute
+const AUDIO_BITRATE = "96k";
 
 // HLS ladder. Renditions taller than the source are skipped (no upscaling).
 const RENDITIONS = [
@@ -65,7 +71,7 @@ const runFfmpeg = (args, cwd) =>
 
 /**
  * @param {string} inputPath
- * @returns {Promise<{height: number, hasAudio: boolean, durationSeconds: number}>}
+ * @returns {Promise<{hasVideo: boolean, height: number|null, hasAudio: boolean, durationSeconds: number}>}
  */
 async function probe(inputPath) {
   const output = await run("ffprobe", [
@@ -75,25 +81,27 @@ async function probe(inputPath) {
     "-show_format",
     inputPath,
   ]).catch((err) => {
-    throw new Error(`The uploaded file could not be read as a video. ${err.message}`);
+    throw new Error(`The uploaded file could not be read as audio or video. ${err.message}`);
   });
   const { streams = [], format = {} } = JSON.parse(output);
-  const video = streams.find((stream) => stream.codec_type === "video");
-
-  if (!video) throw new Error("The uploaded file has no video stream.");
+  // Cover art in audio files is reported as a video stream too
+  const video = streams.find(
+    (stream) => stream.codec_type === "video" && !stream.disposition?.attached_pic
+  );
 
   // Phone videos store portrait as landscape + rotation, ffmpeg auto-rotates
   const rotation = Math.abs(
     Number(
-      video.tags?.rotate ||
-        video.side_data_list?.find((data) => data.rotation !== undefined)?.rotation ||
+      video?.tags?.rotate ||
+        video?.side_data_list?.find((data) => data.rotation !== undefined)?.rotation ||
         0
     )
   );
   const isRotated = rotation === 90 || rotation === 270;
 
   return {
-    height: isRotated ? video.width : video.height,
+    hasVideo: Boolean(video),
+    height: video ? (isRotated ? video.width : video.height) : null,
     hasAudio: streams.some((stream) => stream.codec_type === "audio"),
     durationSeconds: Math.round(Number(format.duration) || 0),
   };
@@ -194,10 +202,32 @@ function buildDownloadArgs(inputPath, { height, hasAudio }, outputPath) {
   ];
 }
 
+/**
+ * Arguments for the audio-only file: the first audio track as AAC in an
+ * .m4a, any picture dropped.
+ *
+ * @param {string} inputPath
+ * @param {string} outputPath - .m4a file
+ * @returns {string[]}
+ */
+function buildAudioArgs(inputPath, outputPath) {
+  return [
+    "-i", inputPath,
+    "-threads", THREADS,
+    "-map", "0:a:0",
+    "-vn",
+    "-c:a", "aac",
+    "-b:a", AUDIO_BITRATE,
+    "-movflags", "+faststart",
+    outputPath,
+  ];
+}
+
 module.exports = {
   HLS_MASTER_PLAYLIST,
   probe,
   runFfmpeg,
   buildHlsArgs,
   buildDownloadArgs,
+  buildAudioArgs,
 };
