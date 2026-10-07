@@ -1,4 +1,6 @@
-FROM node:16.17.0
+# bullseye (Debian 11): the default node:16.17.0 image is buster, whose package
+# repositories are archived, so apt-get (ffmpeg below) fails there
+FROM node:16.17.0-bullseye
 
 EXPOSE 1337
 
