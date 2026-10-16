@@ -1100,7 +1100,13 @@ export interface ApiHosnAssetHosnAsset extends Schema.CollectionType {
           localized: false;
         };
       }>;
-    how_to_use: Attribute.Component<'shared.usage-tip', true> &
+    how_to_use: Attribute.Text &
+      Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    support_reminder: Attribute.Text &
       Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
