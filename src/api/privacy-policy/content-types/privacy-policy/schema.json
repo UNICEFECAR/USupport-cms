@@ -18,7 +18,6 @@
   "attributes": {
     "website": {
       "type": "richtext",
-      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -27,7 +26,6 @@
     },
     "client": {
       "type": "richtext",
-      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -36,7 +34,6 @@
     },
     "provider": {
       "type": "richtext",
-      "required": true,
       "pluginOptions": {
         "i18n": {
           "localized": true
@@ -90,7 +87,8 @@
       "options": {
         "preset": "default"
       },
-      "customField": "plugin::ckeditor5.CKEditor"
+      "customField": "plugin::ckeditor5.CKEditor",
+      "required": true
     },
     "client_ck": {
       "pluginOptions": {
@@ -102,7 +100,8 @@
       "options": {
         "preset": "default"
       },
-      "customField": "plugin::ckeditor5.CKEditor"
+      "customField": "plugin::ckeditor5.CKEditor",
+      "required": true
     },
     "provider_ck": {
       "pluginOptions": {
@@ -114,7 +113,8 @@
       "options": {
         "preset": "default"
       },
-      "customField": "plugin::ckeditor5.CKEditor"
+      "customField": "plugin::ckeditor5.CKEditor",
+      "required": true
     }
   }
 }
