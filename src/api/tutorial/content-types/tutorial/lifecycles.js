@@ -32,7 +32,8 @@ function getMediaId(value) {
   if (Array.isArray(value)) return getMediaId(value[0]);
   if (typeof value === "object") {
     if (value.id !== undefined && value.id !== null) return Number(value.id);
-    if (value.set || value.connect) return getMediaId(value.set ?? value.connect);
+    if (value.set || value.connect)
+      return getMediaId(value.set ?? value.connect);
     return null;
   }
   const id = Number(value);
@@ -133,10 +134,19 @@ module.exports = {
   ...createMediaProcessingLifecycles(UID, ["video"]),
 
   async beforeCreate(event) {
-    await validateEnglishLocaleFirst(event, UID);
-
     const { data } = event.params;
     if (!data) return;
+
+    await validateEnglishLocaleFirst(
+      {
+        ...event,
+        params: {
+          ...event.params,
+          data: { ...data, localizations: localizationIds(data.localizations) },
+        },
+      },
+      UID
+    );
 
     await applyIdentity(data);
     await validateUniqueKey({
@@ -173,7 +183,12 @@ module.exports = {
       id: current.id,
       platform,
       key,
-      siblingIds: (current.localizations || []).map((item) => item.id),
+      // Strapi links a newly created locale back to its siblings afterwards.
+      // The incoming sibling does not exist in current.localizations yet.
+      siblingIds: [
+        ...(current.localizations || []).map((item) => item.id),
+        ...localizationIds(data.localizations),
+      ],
     });
     await assertMp4Source(data.video);
     await validateOnPublish(event, UID, ["video"], (tutorial) => {
