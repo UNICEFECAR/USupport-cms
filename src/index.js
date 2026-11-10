@@ -1,6 +1,7 @@
 "use strict";
 
 const { registerMediaProcessing } = require("./api/utils/media-processing");
+const { registerTutorialTransactions } = require("./api/utils/tutorial-transactions");
 
 module.exports = {
   /**
@@ -18,7 +19,8 @@ module.exports = {
    * This gives you an opportunity to set up your data model,
    * run jobs, or perform some special logic.
    */
-  async bootstrap(/*{ strapi }*/) {
+  async bootstrap({ strapi }) {
+    registerTutorialTransactions(strapi);
     // Protect generated media fields and pick up files interrupted by a restart
     await registerMediaProcessing();
   },
