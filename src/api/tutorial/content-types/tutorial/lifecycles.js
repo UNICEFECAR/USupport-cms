@@ -68,16 +68,17 @@ async function applyIdentity(data) {
 }
 
 /**
- * One tutorial per platform and key. Other locales of the same tutorial are
- * not a conflict: Strapi stores each locale as its own row.
+ * One tutorial per platform, key and locale, matching the public lookup.
+ * Do not depend on localization links: those can be incomplete while Strapi
+ * creates, deletes, or synchronizes translations.
  *
  * @param {object} params
  * @param {number} [params.id]
  * @param {string} params.platform
  * @param {string} params.key
- * @param {number[]} [params.siblingIds]
+ * @param {string} [params.locale]
  */
-async function validateUniqueKey({ id, platform, key, siblingIds = [] }) {
+async function validateUniqueKey({ id, platform, key, locale }) {
   if (!PLATFORMS.includes(platform)) {
     throw new ApplicationError("Please choose a platform.");
   }
@@ -88,18 +89,18 @@ async function validateUniqueKey({ id, platform, key, siblingIds = [] }) {
     );
   }
 
-  const allowed = new Set(siblingIds);
-  if (id) allowed.add(Number(id));
+  const effectiveLocale = locale || await strapi.plugin("i18n")
+    .service("locales").getDefaultLocale();
 
   const matches = await strapi.db.query(UID).findMany({
-    where: { platform, key },
+    where: { platform, key, locale: effectiveLocale },
     select: ["id"],
   });
 
-  const conflict = matches.find((entry) => !allowed.has(Number(entry.id)));
+  const conflict = matches.find((entry) => Number(entry.id) !== Number(id));
   if (conflict) {
     throw new ApplicationError(
-      `A ${platform} tutorial with key "${key}" already exists.`
+      `A ${platform} tutorial with key "${key}" already exists for locale "${effectiveLocale}". Edit that entry to replace its video.`
     );
   }
 }
@@ -152,7 +153,7 @@ module.exports = {
     await validateUniqueKey({
       platform: data.platform,
       key: data.key,
-      siblingIds: localizationIds(data.localizations),
+      locale: data.locale,
     });
     await assertMp4Source(data.video);
   },
@@ -164,7 +165,6 @@ module.exports = {
 
     const current = await strapi.db.query(UID).findOne({
       where: { id },
-      populate: { localizations: { select: ["id"] } },
     });
     if (!current) return;
 
@@ -183,12 +183,7 @@ module.exports = {
       id: current.id,
       platform,
       key,
-      // Strapi links a newly created locale back to its siblings afterwards.
-      // The incoming sibling does not exist in current.localizations yet.
-      siblingIds: [
-        ...(current.localizations || []).map((item) => item.id),
-        ...localizationIds(data.localizations),
-      ],
+      locale: current.locale,
     });
     await assertMp4Source(data.video);
     await validateOnPublish(event, UID, ["video"], (tutorial) => {
