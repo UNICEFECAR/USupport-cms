@@ -194,7 +194,16 @@ function createMediaProcessingLifecycles(uid, fields) {
         processed_source_id: component.source.id,
         error: null,
       });
-      enqueue(componentUid, component.id);
+      if (strapi.db.inTransaction()) {
+        // Do not start ffmpeg/S3 work for a save that may still roll back.
+        // The pending status above commits with the entry, so bootstrap can
+        // also resume the job if the process stops just after committing.
+        await strapi.db.transaction(({ onCommit }) => {
+          onCommit(() => enqueue(componentUid, component.id));
+        });
+      } else {
+        enqueue(componentUid, component.id);
+      }
     }
   }
 
